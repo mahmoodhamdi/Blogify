@@ -1,6 +1,9 @@
+import 'package:blogify/core/service_locator/service_locator.dart';
+import 'package:blogify/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blogify/features/auth/presentation/pages/login_page.dart';
 import 'package:blogify/features/auth/presentation/pages/sign_up_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Routes {
   static const String homePage = '/home_Page';
@@ -18,7 +21,10 @@ class Routes {
         );
       case signUpPage:
         return MaterialPageRoute(
-          builder: (_) => const SignUpPage(),
+          builder: (_) => BlocProvider(
+            create: (context) => getIt<AuthBloc>(),
+            child: const SignUpPage(),
+          ),
         );
       default:
         // error page
