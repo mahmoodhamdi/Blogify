@@ -1,8 +1,15 @@
 import 'package:blogify/core/routes/routes.dart';
+import 'package:blogify/core/secrets/secrets.dart';
 import 'package:blogify/core/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+ final supabase = await Supabase.initialize(
+    url: Secrets.supabaseUrl,
+    anonKey: Secrets.supabaseKey,
+  );
   runApp(const MyApp());
 }
 
