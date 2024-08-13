@@ -1,3 +1,4 @@
+import 'package:blogify/core/routes/routes.dart';
 import 'package:blogify/core/theme/app_pallete.dart';
 import 'package:blogify/core/validators/validation.dart';
 import 'package:blogify/features/auth/presentation/widgets/auth_field.dart';
@@ -78,19 +79,25 @@ class _SignUpPageState extends State<SignUpPage> {
                     }
                   }),
               const SizedBox(height: 20),
-              RichText(
-                text: TextSpan(
-                  text: 'Already have an account? ',
-                  style: Theme.of(context).textTheme.titleMedium,
-                  children: [
-                    TextSpan(
-                      text: 'Sign In',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: AppPallete.gradient2,
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                  ],
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, Routes.loginInPage);
+                },
+                child: RichText(
+                  text: TextSpan(
+                    text: 'Already have an account? ',
+                    style: Theme.of(context).textTheme.titleMedium,
+                    children: [
+                      TextSpan(
+                        text: 'Log In',
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  color: AppPallete.gradient2,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
