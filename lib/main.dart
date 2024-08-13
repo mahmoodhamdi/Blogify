@@ -1,3 +1,5 @@
+import 'package:blogify/core/theme/theme.dart';
+import 'package:blogify/features/auth/presentation/pages/sign_up_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -10,8 +12,10 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      theme: AppTheme.darkThemeMode,
       title: 'Blogify',
+      home: const SignUpPage(),
     );
   }
 }
