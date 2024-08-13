@@ -1,5 +1,5 @@
+import 'package:blogify/core/routes/routes.dart';
 import 'package:blogify/core/theme/theme.dart';
-import 'package:blogify/features/auth/presentation/pages/sign_up_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -16,7 +16,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkThemeMode,
       title: 'Blogify',
-      home: const SignUpPage(),
+      initialRoute: Routes.signUpPage,
+      onGenerateRoute: Routes.generateRoute,
     );
   }
 }
