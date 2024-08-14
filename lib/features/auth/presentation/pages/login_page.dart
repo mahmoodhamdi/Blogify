@@ -1,9 +1,13 @@
+import 'package:blogify/core/common/widgets/loader.dart';
 import 'package:blogify/core/routes/routes.dart';
 import 'package:blogify/core/theme/app_pallete.dart';
+import 'package:blogify/core/utils/show_snackbar.dart';
 import 'package:blogify/core/validators/validation.dart';
+import 'package:blogify/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blogify/features/auth/presentation/widgets/auth_field.dart';
 import 'package:blogify/features/auth/presentation/widgets/auth_gradient_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -56,18 +60,36 @@ class _LoginPageState extends State<LoginPage> {
                   controller: passwordController,
                   isObscureText: true,
                   validator: (value) {
-                    return FieldValidator.validatePassword(value);
+                    return FieldValidator.validateEmpty(value, 'Password');
                   }),
               const SizedBox(height: 20),
-              AuthGradientButton(
-                  buttonText: 'Sign In',
-                  onPressed: () {
-                    if (formKey.currentState!.validate()) {
-                      print("Email: ${emailController.text.trim()}\n");
-                      print("Password: ${passwordController.text.trim()}\n");
-                      print('Form is valid');
-                    }
-                  }),
+              BlocConsumer<AuthBloc, AuthState>(
+                listener: (context, state) {
+                  if (state is AuthSuccess) {
+                    Navigator.pushReplacementNamed(context, Routes.signUpPage);
+                  } else if (state is AuthError) {
+                    showSnackBar(content: state.message, context: context);
+                  }
+                },
+                builder: (context, state) {
+                  if (state is AuthLoading) {
+                    return const Loading();
+                  } else {
+                    return AuthGradientButton(
+                        buttonText: 'Sign In',
+                        onPressed: () async {
+                          if (formKey.currentState!.validate()) {
+                            context.read<AuthBloc>().add(
+                                  SignInEvent(
+                                    email: emailController.text.trim(),
+                                    password: passwordController.text.trim(),
+                                  ),
+                                );
+                          }
+                        });
+                  }
+                },
+              ),
               const SizedBox(height: 20),
               GestureDetector(
                 onTap: () {

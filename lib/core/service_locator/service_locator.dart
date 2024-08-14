@@ -10,10 +10,9 @@ final getIt = GetIt.instance;
 
 Future<void> setupServiceLocator() async {
   final supabase = await Supabase.initialize(
-    url: 'https://vqwlzbeqhpedsvvlljve.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxd2x6YmVxaHBlZHN2dmxsanZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM2MjA4MTgsImV4cCI6MjAzOTE5NjgxOH0.vpRT3MZpu1xH7AQJMcmT3Wy-48JDGCl8OJxCLLynaA8',
-  );
+      url: 'https://cykqzxryzxsavgzdvzdd.supabase.co',
+      anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5a3F6eHJ5enhzYXZnemR2emRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM2MzE2MzQsImV4cCI6MjAzOTIwNzYzNH0.-U1eGQbbzxPNWnbBRiKGWp6aikNu7MlOlwCAJRrylH8');
   final supabaseClient = supabase.client;
   getIt.registerFactory<RemoteDataSourceImpl>(
       () => RemoteDataSourceImpl(supabaseClient: supabaseClient));
@@ -25,7 +24,7 @@ Future<void> setupServiceLocator() async {
   getIt.registerFactory<UserSignInUseCase>(
       () => UserSignInUseCase(authRepository: getIt<AuthRepositoryImpl>()));
 
-  getIt.registerLazySingleton<AuthBloc>(() => AuthBloc(
+  getIt.registerFactory<AuthBloc>(() => AuthBloc(
       userSignUpUseCase: getIt<UserSignUpUseCase>(),
       userSignInUseCase: getIt<UserSignInUseCase>()));
 }
