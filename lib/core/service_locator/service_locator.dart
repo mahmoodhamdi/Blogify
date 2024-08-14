@@ -9,18 +9,18 @@ final getIt = GetIt.instance;
 
 Future<void> setupServiceLocator() async {
   final supabase = await Supabase.initialize(
-      debug: true,
-      url: "https://moeekwhegkshybyopjly.supabase.co",
-      anonKey:
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vZWVrd2hlZ2tzaHlieW9wamx5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM1ODc2OTYsImV4cCI6MjAzOTE2MzY5Nn0.56M3uloQsYEKswUXkhuxaww5yXUgdscWyXoF7KDtufY");
+    url: 'https://vqwlzbeqhpedsvvlljve.supabase.co',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxd2x6YmVxaHBlZHN2dmxsanZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM2MjA4MTgsImV4cCI6MjAzOTE5NjgxOH0.vpRT3MZpu1xH7AQJMcmT3Wy-48JDGCl8OJxCLLynaA8',
+  );
   final supabaseClient = supabase.client;
-  getIt.registerSingleton<RemoteDataSourceImpl>(
-      RemoteDataSourceImpl(supabase: supabaseClient));
+  getIt.registerFactory<RemoteDataSourceImpl>(
+      () => RemoteDataSourceImpl(supabaseClient: supabaseClient));
   getIt.registerSingleton<AuthRepositoryImpl>(
       AuthRepositoryImpl(remoteDataSource: getIt<RemoteDataSourceImpl>()));
 
-  getIt.registerSingleton<UserSignUpUseCase>(
-      UserSignUpUseCase(authRepository: getIt<AuthRepositoryImpl>()));
-  getIt.registerSingleton<AuthBloc>(
-      AuthBloc(userSignUpUseCase: getIt<UserSignUpUseCase>()));
+  getIt.registerFactory<UserSignUpUseCase>(
+      () => UserSignUpUseCase(authRepository: getIt<AuthRepositoryImpl>()));
+  getIt.registerLazySingleton<AuthBloc>(
+      () => AuthBloc(userSignUpUseCase: getIt<UserSignUpUseCase>()));
 }
