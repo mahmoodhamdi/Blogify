@@ -75,7 +75,7 @@ class _SignUpPageState extends State<SignUpPage> {
               BlocConsumer<AuthBloc, AuthState>(
                 listener: (context, state) {
                   if (state is AuthSuccess) {
-                    Navigator.pushReplacementNamed(context, Routes.loginInPage);
+                    Navigator.pushReplacementNamed(context, Routes.signInPage);
                   } else if (state is AuthError) {
                     showSnackBar(content: state.message, context: context);
                   }
@@ -103,7 +103,7 @@ class _SignUpPageState extends State<SignUpPage> {
               const SizedBox(height: 20),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, Routes.loginInPage);
+                  Navigator.pushReplacementNamed(context, Routes.signInPage);
                 },
                 child: RichText(
                   text: TextSpan(
