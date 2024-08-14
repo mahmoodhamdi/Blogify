@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkThemeMode,
       title: 'Blogify',
-      initialRoute: Routes.signUpPage,
+      initialRoute: Routes.signInPage,
       onGenerateRoute: Routes.generateRoute,
     );
   }
