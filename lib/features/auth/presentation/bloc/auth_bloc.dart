@@ -1,3 +1,4 @@
+import 'package:blogify/features/auth/domain/entities/user_entity.dart';
 import 'package:blogify/features/auth/domain/usecases/user_sign_up_usecase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,8 +20,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       result.fold((failure) {
         emit(AuthError(failure.message));
-      }, (uId) {
-        emit(AuthSuccess(uId));
+      }, (user) {
+        emit(AuthSuccess(user));
       });
     });
   }
