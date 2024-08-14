@@ -1,5 +1,6 @@
 import 'package:blogify/features/auth/data/data_sources/remote_data_source.dart';
 import 'package:blogify/features/auth/data/repository/auth_rempository_impl.dart';
+import 'package:blogify/features/auth/domain/usecases/user_sign_in_usecase.dart';
 import 'package:blogify/features/auth/domain/usecases/user_sign_up_usecase.dart';
 import 'package:blogify/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -21,6 +22,10 @@ Future<void> setupServiceLocator() async {
 
   getIt.registerFactory<UserSignUpUseCase>(
       () => UserSignUpUseCase(authRepository: getIt<AuthRepositoryImpl>()));
-  getIt.registerLazySingleton<AuthBloc>(
-      () => AuthBloc(userSignUpUseCase: getIt<UserSignUpUseCase>()));
+  getIt.registerFactory<UserSignInUseCase>(
+      () => UserSignInUseCase(authRepository: getIt<AuthRepositoryImpl>()));
+
+  getIt.registerLazySingleton<AuthBloc>(() => AuthBloc(
+      userSignUpUseCase: getIt<UserSignUpUseCase>(),
+      userSignInUseCase: getIt<UserSignInUseCase>()));
 }
