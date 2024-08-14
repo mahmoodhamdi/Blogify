@@ -6,7 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 abstract interface class RemoteDataSource {
   Future<Either<AppException, UserModel>> signUpWithEmailAndPassword(
       {required String name, required String email, required String password});
-  Future<Either<AppException, UserModel>> loginWithEmailAndPassword(
+  Future<Either<AppException, UserModel>> signInWithEmailAndPassword(
       {required String email, required String password});
 }
 
@@ -32,8 +32,18 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<Either<AppException, UserModel>> loginWithEmailAndPassword(
+  Future<Either<AppException, UserModel>> signInWithEmailAndPassword(
       {required String email, required String password}) async {
-    throw UnimplementedError();
+    try {
+      final authResponse = await supabaseClient.auth
+          .signInWithPassword(email: email, password: password);
+      return Right(UserModel.fromJson(authResponse.user!.toJson()));
+    } catch (e) {
+      if (e is AuthException) {
+        return Left(AppException.fromServerException(e.message));
+      } else {
+        return const Left(AppException());
+      }
+    }
   }
 }

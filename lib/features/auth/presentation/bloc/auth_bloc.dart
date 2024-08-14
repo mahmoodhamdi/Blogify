@@ -1,4 +1,5 @@
 import 'package:blogify/features/auth/domain/entities/user_entity.dart';
+import 'package:blogify/features/auth/domain/usecases/user_sign_in_usecase.dart';
 import 'package:blogify/features/auth/domain/usecases/user_sign_up_usecase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,15 +9,31 @@ part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final UserSignUpUseCase _userSignUpUseCase;
-
-  AuthBloc({required UserSignUpUseCase userSignUpUseCase})
+  final UserSignInUseCase _userSignInUseCase;
+  AuthBloc(
+      {required UserSignUpUseCase userSignUpUseCase,
+      required UserSignInUseCase userSignInUseCase})
       : _userSignUpUseCase = userSignUpUseCase,
+        _userSignInUseCase = userSignInUseCase,
         super(AuthInitial()) {
     on<SignUpEvent>((event, emit) async {
       emit(AuthLoading());
 
       final result = await _userSignUpUseCase.call(UserSignUpParams(
           name: event.name, email: event.email, password: event.password));
+
+      result.fold((failure) {
+        emit(AuthError(failure.message));
+      }, (user) {
+        emit(AuthSuccess(user));
+      });
+    });
+
+    on<SignInEvent>((event, emit) async {
+      emit(AuthLoading());
+
+      final result = await _userSignInUseCase
+          .call(UserSignInParams(email: event.email, password: event.password));
 
       result.fold((failure) {
         emit(AuthError(failure.message));
