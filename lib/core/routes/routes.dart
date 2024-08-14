@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Routes {
   static const String homePage = '/home_Page';
-  static const String loginInPage = '/login_Page';
+  static const String signInPage = '/sign_in_Page';
   static const String signUpPage = '/';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -15,9 +15,12 @@ class Routes {
     // final arguments = settings.arguments;
 
     switch (settings.name) {
-      case loginInPage:
+      case signInPage:
         return MaterialPageRoute(
-          builder: (_) => const LoginPage(),
+          builder: (_) => BlocProvider(
+            create: (context) => getIt<AuthBloc>(),
+            child: const LoginPage(),
+          ),
         );
       case signUpPage:
         return MaterialPageRoute(
