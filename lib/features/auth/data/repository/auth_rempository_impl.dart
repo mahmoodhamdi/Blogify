@@ -12,14 +12,14 @@ class AuthRepositoryImpl implements AuthRepository {
       {required String name,
       required String email,
       required String password}) async {
-   return await remoteDataSource.signUpWithEmailAndPassword(
+    return await remoteDataSource.signUpWithEmailAndPassword(
         name: name, email: email, password: password);
   }
 
   @override
-  Future<Either<AppException, UserEntity>> loginWithEmailAndPassword(
-      {required String email, required String password}) async{
-    return await remoteDataSource.loginWithEmailAndPassword(
+  Future<Either<AppException, UserEntity>> signInWithEmailAndPassword(
+      {required String email, required String password}) async {
+    return await remoteDataSource.signInWithEmailAndPassword(
         email: email, password: password);
   }
 }
