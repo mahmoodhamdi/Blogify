@@ -1,5 +1,7 @@
+import 'package:blogify/core/common/widgets/loader.dart';
 import 'package:blogify/core/routes/routes.dart';
 import 'package:blogify/core/theme/app_pallete.dart';
+import 'package:blogify/core/utils/show_snackbar.dart';
 import 'package:blogify/core/validators/validation.dart';
 import 'package:blogify/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blogify/features/auth/presentation/widgets/auth_field.dart';
@@ -52,7 +54,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   hintText: 'Name',
                   controller: nameController,
                   validator: (value) {
-                    return FieldValidator.validateEmpty(value, "Name");
+                    return FieldValidator.validateName(value);
                   }),
               const SizedBox(height: 15),
               AuthField(
@@ -75,16 +77,12 @@ class _SignUpPageState extends State<SignUpPage> {
                   if (state is AuthSuccess) {
                     Navigator.pushReplacementNamed(context, Routes.loginInPage);
                   } else if (state is AuthError) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.message),
-                      ),
-                    );
+                    showSnackBar(content: state.message, context: context);
                   }
                 },
                 builder: (context, state) {
                   if (state is AuthLoading) {
-                    return const CircularProgressIndicator();
+                    return const Loading();
                   } else {
                     return AuthGradientButton(
                         buttonText: 'Sign Up',
