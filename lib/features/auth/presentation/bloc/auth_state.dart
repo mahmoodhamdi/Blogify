@@ -6,8 +6,8 @@ abstract class AuthState {}
 class AuthInitial extends AuthState {}
 
 final class AuthSuccess extends AuthState {
-  final String id;
-  AuthSuccess(this.id);
+  final UserEntity user;
+  AuthSuccess(this.user);
 }
 
 class AuthError extends AuthState {
