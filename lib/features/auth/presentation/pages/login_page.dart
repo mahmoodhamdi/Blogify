@@ -1,3 +1,4 @@
+import 'package:blogify/core/common/widgets/gradient_button.dart';
 import 'package:blogify/core/common/widgets/loader.dart';
 import 'package:blogify/core/routes/routes.dart';
 import 'package:blogify/core/theme/app_pallete.dart';
@@ -5,7 +6,6 @@ import 'package:blogify/core/utils/show_snackbar.dart';
 import 'package:blogify/core/validators/validation.dart';
 import 'package:blogify/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blogify/features/auth/presentation/widgets/auth_field.dart';
-import 'package:blogify/features/auth/presentation/widgets/auth_gradient_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -66,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
               BlocConsumer<AuthBloc, AuthState>(
                 listener: (context, state) {
                   if (state is AuthSuccess) {
-                    Navigator.pushReplacementNamed(context, Routes.homePage);
+                    Navigator.pushReplacementNamed(context, Routes.blogPage);
                   } else if (state is AuthError) {
                     showSnackBar(content: state.message, context: context);
                   }
@@ -75,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
                   if (state is AuthLoading) {
                     return const Loader();
                   } else {
-                    return AuthGradientButton(
+                    return GradientButton(
                         buttonText: 'Sign In',
                         onPressed: () async {
                           if (formKey.currentState!.validate()) {
