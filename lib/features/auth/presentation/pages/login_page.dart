@@ -66,14 +66,14 @@ class _LoginPageState extends State<LoginPage> {
               BlocConsumer<AuthBloc, AuthState>(
                 listener: (context, state) {
                   if (state is AuthSuccess) {
-                    Navigator.pushReplacementNamed(context, Routes.signUpPage);
+                    Navigator.pushReplacementNamed(context, Routes.homePage);
                   } else if (state is AuthError) {
                     showSnackBar(content: state.message, context: context);
                   }
                 },
                 builder: (context, state) {
                   if (state is AuthLoading) {
-                    return const Loading();
+                    return const Loader();
                   } else {
                     return AuthGradientButton(
                         buttonText: 'Sign In',
