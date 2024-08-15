@@ -22,4 +22,9 @@ class AuthRepositoryImpl implements AuthRepository {
     return await remoteDataSource.signInWithEmailAndPassword(
         email: email, password: password);
   }
+
+  @override
+  Future<Either<AppException, UserEntity?>> getCurrentUserData() async {
+    return await remoteDataSource.getCurrentUserData();
+  }
 }

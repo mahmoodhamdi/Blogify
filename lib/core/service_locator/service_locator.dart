@@ -1,5 +1,7 @@
+import 'package:blogify/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:blogify/features/auth/data/data_sources/remote_data_source.dart';
 import 'package:blogify/features/auth/data/repository/auth_rempository_impl.dart';
+import 'package:blogify/features/auth/domain/usecases/get_current_user_usecase.dart';
 import 'package:blogify/features/auth/domain/usecases/user_sign_in_usecase.dart';
 import 'package:blogify/features/auth/domain/usecases/user_sign_up_usecase.dart';
 import 'package:blogify/features/auth/presentation/bloc/auth_bloc.dart';
@@ -13,18 +15,23 @@ Future<void> setupServiceLocator() async {
       url: 'https://cykqzxryzxsavgzdvzdd.supabase.co',
       anonKey:
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5a3F6eHJ5enhzYXZnemR2emRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM2MzE2MzQsImV4cCI6MjAzOTIwNzYzNH0.-U1eGQbbzxPNWnbBRiKGWp6aikNu7MlOlwCAJRrylH8');
-  final supabaseClient = supabase.client;
+
+  getIt.registerLazySingleton(() => supabase.client);
   getIt.registerFactory<RemoteDataSourceImpl>(
-      () => RemoteDataSourceImpl(supabaseClient: supabaseClient));
-  getIt.registerSingleton<AuthRepositoryImpl>(
+      () => RemoteDataSourceImpl(supabaseClient: getIt<SupabaseClient>()));
+  getIt.registerFactory<AuthRepositoryImpl>(() =>
       AuthRepositoryImpl(remoteDataSource: getIt<RemoteDataSourceImpl>()));
 
   getIt.registerFactory<UserSignUpUseCase>(
       () => UserSignUpUseCase(authRepository: getIt<AuthRepositoryImpl>()));
   getIt.registerFactory<UserSignInUseCase>(
       () => UserSignInUseCase(authRepository: getIt<AuthRepositoryImpl>()));
-
+  getIt.registerFactory<GetCurrentUserUsecase>(
+      () => GetCurrentUserUsecase(authRepository: getIt<AuthRepositoryImpl>()));
+  getIt.registerFactory<AppUserCubit>(() => AppUserCubit());
   getIt.registerFactory<AuthBloc>(() => AuthBloc(
       userSignUpUseCase: getIt<UserSignUpUseCase>(),
-      userSignInUseCase: getIt<UserSignInUseCase>()));
+      userSignInUseCase: getIt<UserSignInUseCase>(),
+      getCurrentUserUsecase: getIt<GetCurrentUserUsecase>(),
+      appUserCubit: getIt<AppUserCubit>()));
 }
