@@ -24,6 +24,8 @@ class _ChoiceChipWidgetState extends State<ChoiceChipWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Wrap(
       spacing: 10.0,
       runSpacing: 15.0,
@@ -40,22 +42,28 @@ class _ChoiceChipWidgetState extends State<ChoiceChipWidget> {
                 } else {
                   _selectedIndices.remove(index);
                 }
-                // Call the callback with the updated list of selected topics
                 widget.onSelectionChanged(
                     _selectedIndices.map((i) => _options[i]).toList());
               });
             },
-            selectedColor: AppPallete.gradient2,
-            backgroundColor: AppPallete.transparentColor,
+            selectedColor:
+                isDarkMode ? AppPalette.darkAccent : AppPalette.lightAccent,
+            backgroundColor: AppPalette.transparent,
             side: BorderSide(
               color: _selectedIndices.contains(index)
-                  ? AppPallete.gradient2
-                  : AppPallete.borderColor,
+                  ? (isDarkMode
+                      ? AppPalette.darkPrimary
+                      : AppPalette.lightPrimary)
+                  : (isDarkMode
+                      ? AppPalette.darkSurface
+                      : AppPalette.lightSurface),
             ),
             labelStyle: TextStyle(
               color: _selectedIndices.contains(index)
-                  ? AppPallete.whiteColor
-                  : AppPallete.greyColor,
+                  ? (isDarkMode ? AppPalette.darkText : AppPalette.lightText)
+                  : (isDarkMode
+                      ? AppPalette.darkText.withOpacity(0.7)
+                      : AppPalette.lightText.withOpacity(0.7)),
               fontWeight: FontWeight.bold,
             ),
             shape: RoundedRectangleBorder(
