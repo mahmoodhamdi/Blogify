@@ -6,49 +6,81 @@ import 'package:dartz/dartz.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class BlogRemoteDataSource {
-  Future<Either<AppException, BlogModel>> addBlog(BlogModel blogModel);
+  Future<Either<AppException, BlogModel>> addBlog(
+      {required BlogModel blogModel});
 
   Future<Either<AppException, String>> uploadBlogImage(
-      {required File image, required BlogModel blogModel});
+      {File? image, required BlogModel blogModel});
 
-  Future<Either<AppException, BlogModel>> getBlogById(String id);
+  Future<Either<AppException, BlogModel>> getBlogById({required String id});
 
   Future<Either<AppException, List<BlogModel>>> getAllBlogs();
 
-  Future<Either<AppException, BlogModel>> updateBlog(BlogModel blogModel);
+  Future<Either<AppException, BlogModel>> updateBlog(
+      {required BlogModel blogModel});
 
-  Future<Either<AppException, BlogModel>> deleteBlog(String id);
+  Future<Either<AppException, BlogModel>> deleteBlog({required String id});
 
-  Future<Either<AppException, List<BlogModel>>> getBlogsByTopic(String topic);
+  Future<Either<AppException, List<BlogModel>>> getBlogsByTopic(
+      {required String topic});
 
   Future<Either<AppException, List<BlogModel>>> getBlogsByPosterId(
       String posterId);
 
-  Future<Either<AppException, List<BlogModel>>> getBlogsByTitle(String title);
+  Future<Either<AppException, List<BlogModel>>> getBlogsByTitle(
+      {required String title});
 
   Future<Either<AppException, List<BlogModel>>> getBlogsByContent(
-      String content);
+      {required String content});
 
   Future<Either<AppException, List<BlogModel>>> getBlogsByDateTime(
-      String dateTime);
+      {required String dateTime});
 }
 
 class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
   final SupabaseClient supabaseClient;
   BlogRemoteDataSourceImpl({required this.supabaseClient});
   @override
-  Future<Either<AppException, BlogModel>> addBlog(BlogModel blogModel) async {
+  Future<Either<AppException, BlogModel>> addBlog(
+      {required BlogModel blogModel}) async {
     try {
-      final response =
-          await supabaseClient.from('blogs').insert(blogModel.toMap()).select();
-      return Right(BlogModel.fromMap(response.first));
+      // First, insert the blog data
+      await supabaseClient.from('blogs').insert(blogModel.toMap());
+
+      // Then, fetch the inserted data
+      final response = await supabaseClient
+          .from('blogs')
+          .select()
+          .eq('id', blogModel.id)
+          .single();
+
+      return Right(BlogModel.fromMap(response));
     } catch (e) {
-      return const Left(AppException());
+      print("Error adding blog: $e");
+      return Left(AppException.fromServerException(e.toString()));
+    }
+  }
+  @override
+  Future<Either<AppException, String>> uploadBlogImage(
+      {File? image, required BlogModel blogModel}) async {
+    try {
+      if (image == null) {
+        return const Left(AppException());
+      }
+      await supabaseClient.storage
+          .from('blog_images')
+          .upload(blogModel.id, image);
+      return Right(supabaseClient.storage
+          .from('blog_images')
+          .getPublicUrl(blogModel.id)
+          .toString());
+    } catch (e) {
+      return Left(AppException.fromServerException(e.toString()));
     }
   }
 
   @override
-  Future<Either<AppException, BlogModel>> deleteBlog(String id) {
+  Future<Either<AppException, BlogModel>> deleteBlog({required String id}) {
     // TODO: implement deleteBlog
     throw UnimplementedError();
   }
@@ -60,21 +92,21 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
   }
 
   @override
-  Future<Either<AppException, BlogModel>> getBlogById(String id) {
+  Future<Either<AppException, BlogModel>> getBlogById({required String id}) {
     // TODO: implement getBlogById
     throw UnimplementedError();
   }
 
   @override
   Future<Either<AppException, List<BlogModel>>> getBlogsByContent(
-      String content) {
+      {required String content}) {
     // TODO: implement getBlogsByContent
     throw UnimplementedError();
   }
 
   @override
   Future<Either<AppException, List<BlogModel>>> getBlogsByDateTime(
-      String dateTime) {
+      {required String dateTime}) {
     // TODO: implement getBlogsByDateTime
     throw UnimplementedError();
   }
@@ -87,36 +119,23 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
   }
 
   @override
-  Future<Either<AppException, List<BlogModel>>> getBlogsByTitle(String title) {
+  Future<Either<AppException, List<BlogModel>>> getBlogsByTitle(
+      {required String title}) {
     // TODO: implement getBlogsByTitle
     throw UnimplementedError();
   }
 
   @override
-  Future<Either<AppException, List<BlogModel>>> getBlogsByTopic(String topic) {
+  Future<Either<AppException, List<BlogModel>>> getBlogsByTopic(
+      {required String topic}) {
     // TODO: implement getBlogsByTopic
     throw UnimplementedError();
   }
 
   @override
-  Future<Either<AppException, BlogModel>> updateBlog(BlogModel blogModel) {
+  Future<Either<AppException, BlogModel>> updateBlog(
+      {required BlogModel blogModel}) {
     // TODO: implement updateBlog
     throw UnimplementedError();
-  }
-
-  @override
-  Future<Either<AppException, String>> uploadBlogImage(
-      {required File image, required BlogModel blogModel}) async {
-    try {
-      await supabaseClient.storage
-          .from('blog_images')
-          .upload(blogModel.id, image);
-      return Right(supabaseClient.storage
-          .from('blog_images')
-          .getPublicUrl(blogModel.id)
-          .toString());
-    } catch (e) {
-      return Left(AppException.fromServerException(e.toString()));
-    }
   }
 }

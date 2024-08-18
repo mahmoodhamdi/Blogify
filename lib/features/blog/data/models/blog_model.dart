@@ -6,7 +6,7 @@ class BlogModel extends BlogEntity {
       required super.title,
       required super.posterId,
       required super.content,
-      required super.updatedAt,
+      // required super.updatedAt,
       super.imageUrl,
       super.topics});
 
@@ -27,9 +27,7 @@ class BlogModel extends BlogEntity {
           title: map['title'] as String,
           posterId: map['poster_id'] as String,
           content: map['content'] as String,
-          updatedAt: map['updated_at'] == null
-              ? DateTime.now()
-              : DateTime.parse(map['updated_at']),
+          // updatedAt: map['updated_at'],
           imageUrl: map['image_url'] as String,
           topics: map['topics'] as List<String>,
         );
@@ -40,9 +38,43 @@ class BlogModel extends BlogEntity {
       'title': title,
       'poster_id': posterId,
       'content': content,
-      'updated_at': updatedAt,
+      // 'updated_at': updatedAt,
       'image_url': imageUrl,
       'topics': topics
     };
+  }
+  //copyWith
+
+  BlogModel copyWithContent({String? content}) {
+    return BlogModel(
+        id: id,
+        title: title,
+        posterId: posterId,
+        content: content ?? this.content,
+        // updatedAt: updatedAt,
+        imageUrl: imageUrl,
+        topics: topics);
+  }
+
+  BlogModel copyWithTopics({List<String>? topics}) {
+    return BlogModel(
+        id: id,
+        title: title,
+        posterId: posterId,
+        content: content,
+        // updatedAt: updatedAt,
+        imageUrl: imageUrl,
+        topics: topics ?? this.topics);
+  }
+
+  BlogModel copyWithImageUrl({String? imageUrl}) {
+    return BlogModel(
+        id: id,
+        title: title,
+        posterId: posterId,
+        content: content,
+   //     updatedAt: updatedAt,
+        imageUrl: imageUrl ?? this.imageUrl,
+        topics: topics);
   }
 }

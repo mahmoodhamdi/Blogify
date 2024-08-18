@@ -4,7 +4,6 @@ class BlogEntity extends Equatable {
   final String title;
   final String content;
   final String ?imageUrl;
-  final DateTime updatedAt;
   final List<String> ?topics;
   final String posterId;
   final String id;
@@ -13,7 +12,6 @@ class BlogEntity extends Equatable {
     required this.title,
     required this.content,
       this.imageUrl,
-    required this.updatedAt,
       this.topics,
     required this.posterId,
     required this.id,
@@ -24,7 +22,7 @@ class BlogEntity extends Equatable {
         title,
         content,
         imageUrl,
-        updatedAt,
+      
         topics,
         posterId,
         id,

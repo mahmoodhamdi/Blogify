@@ -1,13 +1,11 @@
 name: blogify
 description: "A Blog App"
-publish_to: "none" 
-
+publish_to: "none"
 
 version: 1.0.0+1
 
 environment:
   sdk: ^3.5.0
-
 
 dependencies:
   app_links: ^6.2.0
@@ -22,12 +20,12 @@ dependencies:
   image_picker: ^1.1.2
   intl: ^0.19.0
   supabase_flutter: ^2.6.0
+  uuid: ^4.4.2
 
 dev_dependencies:
   flutter_lints: ^4.0.0
   flutter_test:
     sdk: flutter
-
 
 flutter:
 

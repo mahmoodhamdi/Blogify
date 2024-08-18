@@ -2,7 +2,9 @@ import 'package:blogify/core/theme/app_pallete.dart';
 import 'package:flutter/material.dart';
 
 class ChoiceChipWidget extends StatefulWidget {
-  const ChoiceChipWidget({super.key});
+  final Function(List<String>) onSelectionChanged;
+
+  const ChoiceChipWidget({super.key, required this.onSelectionChanged});
 
   @override
   _ChoiceChipWidgetState createState() => _ChoiceChipWidgetState();
@@ -38,6 +40,9 @@ class _ChoiceChipWidgetState extends State<ChoiceChipWidget> {
                 } else {
                   _selectedIndices.remove(index);
                 }
+                // Call the callback with the updated list of selected topics
+                widget.onSelectionChanged(
+                    _selectedIndices.map((i) => _options[i]).toList());
               });
             },
             selectedColor: AppPallete.gradient2,
