@@ -5,6 +5,10 @@ import 'package:blogify/features/auth/domain/usecases/get_current_user_usecase.d
 import 'package:blogify/features/auth/domain/usecases/user_sign_in_usecase.dart';
 import 'package:blogify/features/auth/domain/usecases/user_sign_up_usecase.dart';
 import 'package:blogify/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:blogify/features/blog/data/data_source/blog_remote_data_source.dart';
+import 'package:blogify/features/blog/data/repository/blog_repository_impl.dart';
+import 'package:blogify/features/blog/domain/usecases/add_blog_usecase.dart';
+import 'package:blogify/features/blog/presentation/bloc/blog_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -34,4 +38,16 @@ Future<void> setupServiceLocator() async {
       userSignInUseCase: getIt<UserSignInUseCase>(),
       getCurrentUserUsecase: getIt<GetCurrentUserUsecase>(),
       appUserCubit: getIt<AppUserCubit>()));
+  getIt.registerFactory<BlogRemoteDataSourceImpl>(
+    () => BlogRemoteDataSourceImpl(supabaseClient: getIt<SupabaseClient>()),
+  );
+  getIt.registerFactory<BlogRepositoryImpl>(() => BlogRepositoryImpl(
+      blogRemoteDataSource: getIt<BlogRemoteDataSourceImpl>()));
+
+  getIt.registerFactory<AddBlogUsecase>(
+    () => AddBlogUsecase(blogRepository: getIt<BlogRepositoryImpl>()),
+  );
+  getIt.registerFactory<BlogBloc>(() => BlogBloc(
+        addBlogUsecase: getIt<AddBlogUsecase>(),
+      ));
 }
