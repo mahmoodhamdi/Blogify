@@ -1,7 +1,7 @@
 import 'dart:io';
 
+import 'package:blogify/core/common/widgets/choice_chip_widget.dart';
 import 'package:blogify/core/common/widgets/gradient_button.dart';
-import 'package:blogify/core/constants/text_constants.dart';
 import 'package:blogify/core/theme/app_pallete.dart';
 import 'package:blogify/core/utils/pick_image.dart';
 import 'package:blogify/features/blog/presentation/widgets/blog_editor.dart';
@@ -100,41 +100,7 @@ class _AddBlogPageState extends State<AddBlogPage> {
                           ),
                         ),
                   const SizedBox(height: 20),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: TextConstants.topics
-                          .map(
-                            (e) => Padding(
-                              padding:   EdgeInsets.all(MediaQuery.of(context).size.width * 0.01),
-                              child: GestureDetector(
-                                onTap: () {
-                                  if (selectedTopics.contains(e)) {
-                                    selectedTopics.remove(e);
-                                  } else {
-                                    selectedTopics.add(e);
-                                  }
-                                  setState(() {});
-                                },
-                                child: Chip(
-                                  label: Text(e),
-                                  color: selectedTopics.contains(e)
-                                      ? const WidgetStatePropertyAll(
-                                          AppPallete.gradient1,
-                                        )
-                                      : null,
-                                  side: selectedTopics.contains(e)
-                                      ? null
-                                      : const BorderSide(
-                                          color: AppPallete.borderColor,
-                                        ),
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  ),
+                  const ChoiceChipWidget(),
                   const SizedBox(height: 10),
                   BlogEditor(
                     controller: titleController,
@@ -146,7 +112,7 @@ class _AddBlogPageState extends State<AddBlogPage> {
                     hintText: 'Blog content',
                   ),
                   const SizedBox(height: 20),
-                GradientButton(buttonText: 'Add Blog', onPressed: (){}),
+                  GradientButton(buttonText: 'Add Blog', onPressed: () {}),
                 ],
               ),
             ),
