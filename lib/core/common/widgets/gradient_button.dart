@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class GradientButton extends StatelessWidget {
   final String buttonText;
   final VoidCallback onPressed;
+
   const GradientButton({
     super.key,
     required this.buttonText,
@@ -12,31 +13,41 @@ class GradientButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
+      width: double.infinity,
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [
-            AppPallete.gradient1,
-            AppPallete.gradient2,
-            // AppPallete.gradient3,
-          ],
-          begin: Alignment.bottomLeft,
-          end: Alignment.topRight,
+        gradient: LinearGradient(
+          colors: isDarkMode
+              ? [AppPalette.darkPrimary, AppPalette.darkAccent]
+              : [AppPalette.lightPrimary, AppPalette.lightAccent],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
         ),
-        borderRadius: BorderRadius.circular(7),
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: isDarkMode ? Colors.black26 : Colors.black12,
+            offset: const Offset(0, 2),
+            blurRadius: 4,
+          ),
+        ],
       ),
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          fixedSize: const Size(395, 55),
-          backgroundColor: AppPallete.transparentColor,
-          shadowColor: AppPallete.transparentColor,
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+          backgroundColor: AppPalette.transparent,
+          shadowColor: AppPalette.transparent,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         child: Text(
           buttonText,
-          style: const TextStyle(
-            fontSize: 17,
+          style: TextStyle(
+            fontSize: 16,
             fontWeight: FontWeight.w600,
+            color: isDarkMode ? AppPalette.darkText : AppPalette.lightText,
           ),
         ),
       ),
