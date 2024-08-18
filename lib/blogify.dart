@@ -41,7 +41,9 @@ class _BlogifyState extends State<Blogify> with WidgetsBindingObserver {
         print("AppUserState: $appUserState");
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: AppTheme.darkThemeMode,
+         theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: ThemeMode.system, 
           title: 'Blogify',
           home: _getInitialPage(appUserState),
           onGenerateRoute: Routes.generateRoute,
