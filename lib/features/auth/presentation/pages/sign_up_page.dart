@@ -77,7 +77,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   if (state is AuthSuccess) {
                     Navigator.pushReplacementNamed(context, Routes.blogPage);
                   } else if (state is AuthError) {
-                    showSnackBar(content: state.message, context: context);
+                    showSnackBar(content: state.message, context: context,type: SnackBarType.error);
                   }
                 },
                 builder: (context, state) {
@@ -113,10 +113,12 @@ class _SignUpPageState extends State<SignUpPage> {
                       TextSpan(
                         text: 'Log In',
                         style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  color: AppPallete.gradient2,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          Theme.of(context).textTheme.titleMedium?.copyWith(
+  color: Theme.of(context).brightness == Brightness.dark
+      ? AppPalette.darkAccent
+      : AppPalette.lightAccent,
+  fontWeight: FontWeight.bold,
+),
                       ),
                     ],
                   ),

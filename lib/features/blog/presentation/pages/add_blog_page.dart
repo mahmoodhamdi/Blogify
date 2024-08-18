@@ -82,26 +82,40 @@ class _AddBlogPageState extends State<AddBlogPage> {
                             selectImage();
                           },
                           child: DottedBorder(
-                            color: AppPallete.borderColor,
-                            dashPattern: const [10, 4],
-                            radius: const Radius.circular(10),
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? AppPalette.darkSurface
+                                    : AppPalette.lightSurface,
+                            dashPattern: const [8, 4],
+                            radius: const Radius.circular(12),
                             borderType: BorderType.RRect,
+                            strokeWidth: 2,
                             strokeCap: StrokeCap.round,
+                            padding: const EdgeInsets.all(16),
                             child: SizedBox(
                               height: MediaQuery.of(context).size.height * 0.3,
                               width: double.infinity,
-                              child: const Column(
+                              child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
                                     Icons.folder_open,
-                                    size: 40,
+                                    size: 50,
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? AppPalette.darkPrimary
+                                        : AppPalette.lightPrimary,
                                   ),
-                                  SizedBox(height: 15),
+                                  const SizedBox(height: 15),
                                   Text(
                                     'Select your image',
                                     style: TextStyle(
-                                      fontSize: 15,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? AppPalette.darkText
+                                          : AppPalette.lightText,
                                     ),
                                   ),
                                 ],
@@ -145,7 +159,7 @@ class _AddBlogPageState extends State<AddBlogPage> {
                       }
                       return GradientButton(
                           buttonText: 'Add Blog',
-                          onPressed: () {
+                          onPressed: () async {
                             _uploadBlog(context);
                           });
                     },
@@ -157,7 +171,7 @@ class _AddBlogPageState extends State<AddBlogPage> {
         ));
   }
 
-  void _uploadBlog(BuildContext context) {
+  _uploadBlog(BuildContext context) async {
     if (formKey.currentState!.validate()) {
       final String posterId =
           (context.read<AuthBloc>().state as AuthSuccess).user.id;
