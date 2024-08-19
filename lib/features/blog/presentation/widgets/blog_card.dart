@@ -1,3 +1,4 @@
+import 'package:blogify/core/routes/routes.dart';
 import 'package:blogify/core/theme/app_pallete.dart';
 import 'package:blogify/core/utils/calculate_reading_time.dart';
 import 'package:blogify/features/blog/domain/entities/blog_entity.dart';
@@ -22,7 +23,7 @@ class BlogCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        // Add navigation or actions here
+        Navigator.pushNamed(context, Routes.blogViewPage, arguments: blog);
       },
       child: Container(
         height: 200,
