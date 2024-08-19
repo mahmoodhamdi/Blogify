@@ -1,7 +1,9 @@
 import 'package:blogify/features/auth/presentation/pages/login_page.dart';
 import 'package:blogify/features/auth/presentation/pages/sign_up_page.dart';
+import 'package:blogify/features/blog/domain/entities/blog_entity.dart';
 import 'package:blogify/features/blog/presentation/pages/add_blog_page.dart';
 import 'package:blogify/features/blog/presentation/pages/blog_page.dart';
+import 'package:blogify/features/blog/presentation/pages/blog_viewer_page.dart';
 import 'package:flutter/material.dart';
 
 class Routes {
@@ -9,6 +11,7 @@ class Routes {
   static const String signUpPage = '/sign_up_page';
   static const String blogPage = '/blog_page';
   static const String addBlogPage = '/add_blog_page';
+  static const String blogViewPage = '/blog_view_page';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -24,9 +27,15 @@ class Routes {
         return MaterialPageRoute(
           builder: (_) => const BlogPage(),
         );
-        case addBlogPage:
+      case addBlogPage:
         return MaterialPageRoute(
           builder: (_) => const AddBlogPage(),
+        );
+      case blogViewPage:
+        return MaterialPageRoute(
+          builder: (_) => BlogViewPage(
+            blog: settings.arguments as BlogEntity,
+          ),
         );
       default:
         return MaterialPageRoute(
