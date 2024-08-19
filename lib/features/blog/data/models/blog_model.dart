@@ -6,7 +6,7 @@ class BlogModel extends BlogEntity {
       required super.title,
       required super.posterId,
       required super.content,
-      // required super.updatedAt,
+      super.posterName,
       super.imageUrl,
       super.topics});
 
@@ -28,8 +28,9 @@ class BlogModel extends BlogEntity {
           posterId: map['poster_id'] as String,
           content: map['content'] as String,
           // updatedAt: map['updated_at'],
-          imageUrl: map['image_url'] as String,
+          imageUrl: map['image_url'] ?? '',
           topics: map['topics'].toString().split(', '),
+          posterName: map['profiles']['name'] as String,
         );
 
   Map<String, dynamic> toMap() {
@@ -76,5 +77,17 @@ class BlogModel extends BlogEntity {
         //     updatedAt: updatedAt,
         imageUrl: imageUrl ?? this.imageUrl,
         topics: topics);
+  }
+
+  BlogModel copyWithPosterName({String? posterName}) {
+    return BlogModel(
+        id: id,
+        title: title,
+        posterId: posterId,
+        content: content,
+        // updatedAt: updatedAt,
+        imageUrl: imageUrl,
+        topics: topics,
+        posterName: posterName ?? this.posterName);
   }
 }

@@ -60,6 +60,7 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
       return Left(AppException.fromServerException(e.toString()));
     }
   }
+
   @override
   Future<Either<AppException, String>> uploadBlogImage(
       {File? image, required BlogModel blogModel}) async {
@@ -82,12 +83,6 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
   @override
   Future<Either<AppException, BlogModel>> deleteBlog({required String id}) {
     // TODO: implement deleteBlog
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Either<AppException, List<BlogModel>>> getAllBlogs() {
-    // TODO: implement getAllBlogs
     throw UnimplementedError();
   }
 
@@ -137,5 +132,20 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
       {required BlogModel blogModel}) {
     // TODO: implement updateBlog
     throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<AppException, List<BlogModel>>> getAllBlogs() async {
+    try {
+      final response =
+          await supabaseClient.from('blogs').select("*,profiles(name)");
+      List<BlogModel> blogs = response
+          .map((e) => BlogModel.fromMap(e)
+              .copyWithPosterName(posterName: e['profiles']['name']))
+          .toList();
+      return Right(blogs);
+    } catch (e) {
+      return Left(AppException.fromServerException(e.toString()));
+    }
   }
 }
