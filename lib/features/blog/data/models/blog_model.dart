@@ -29,7 +29,7 @@ class BlogModel extends BlogEntity {
           content: map['content'] as String,
           // updatedAt: map['updated_at'],
           imageUrl: map['image_url'] ?? '',
-          topics: map['topics'].toString().split(', '),
+          topics: map['topics'].cast<String>(),
           posterName: map['profiles']['name'] as String,
         );
 
