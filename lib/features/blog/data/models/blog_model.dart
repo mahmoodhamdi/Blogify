@@ -29,7 +29,7 @@ class BlogModel extends BlogEntity {
           content: map['content'] as String,
           // updatedAt: map['updated_at'],
           imageUrl: map['image_url'] as String,
-          topics: map['topics'] as List<String>,
+          topics: map['topics'].toString().split(', '),
         );
 
   Map<String, dynamic> toMap() {
@@ -73,7 +73,7 @@ class BlogModel extends BlogEntity {
         title: title,
         posterId: posterId,
         content: content,
-   //     updatedAt: updatedAt,
+        //     updatedAt: updatedAt,
         imageUrl: imageUrl ?? this.imageUrl,
         topics: topics);
   }
