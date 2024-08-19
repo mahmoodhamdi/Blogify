@@ -7,6 +7,7 @@ class BlogEntity extends Equatable {
   final List<String> ?topics;
   final String posterId;
   final String id;
+  final String? posterName;
 
   const BlogEntity({
     required this.title,
@@ -15,6 +16,7 @@ class BlogEntity extends Equatable {
       this.topics,
     required this.posterId,
     required this.id,
+    this.posterName,
   });
 
   @override
@@ -22,7 +24,7 @@ class BlogEntity extends Equatable {
         title,
         content,
         imageUrl,
-      
+        posterName,
         topics,
         posterId,
         id,

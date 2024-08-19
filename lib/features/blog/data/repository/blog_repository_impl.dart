@@ -36,4 +36,9 @@ class BlogRepositoryImpl implements BlogRepository {
 
     return Right(blogModel);
   }
+
+  @override
+  Future<Either<AppException, List<BlogEntity>>> getAllBlogs() async {
+    return await blogRemoteDataSource.getAllBlogs();
+  }
 }
