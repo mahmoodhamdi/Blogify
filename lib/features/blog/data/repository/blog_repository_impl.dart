@@ -27,12 +27,12 @@ class BlogRepositoryImpl implements BlogRepository {
         content: content,
         // updatedAt: updatedAt,
         topics: topics);
-    await blogRemoteDataSource.addBlog(blogModel: blogModel);
 
     final imageUrl = await blogRemoteDataSource.uploadBlogImage(
         image: image, blogModel: blogModel);
     imageUrl.fold((l) => const AppException(),
         (r) => blogModel = blogModel.copyWithImageUrl(imageUrl: r));
+    await blogRemoteDataSource.addBlog(blogModel: blogModel);
 
     return Right(blogModel);
   }
