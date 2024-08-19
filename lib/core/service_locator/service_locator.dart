@@ -8,6 +8,7 @@ import 'package:blogify/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blogify/features/blog/data/data_source/blog_remote_data_source.dart';
 import 'package:blogify/features/blog/data/repository/blog_repository_impl.dart';
 import 'package:blogify/features/blog/domain/usecases/add_blog_usecase.dart';
+import 'package:blogify/features/blog/domain/usecases/get_all_blogs_usecase.dart';
 import 'package:blogify/features/blog/presentation/bloc/blog_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -47,7 +48,11 @@ Future<void> setupServiceLocator() async {
   getIt.registerFactory<AddBlogUsecase>(
     () => AddBlogUsecase(blogRepository: getIt<BlogRepositoryImpl>()),
   );
+  getIt.registerFactory<GetAllBlogsUsecase>(
+    () => GetAllBlogsUsecase(blogRepository: getIt<BlogRepositoryImpl>()),
+  );
   getIt.registerFactory<BlogBloc>(() => BlogBloc(
         addBlogUsecase: getIt<AddBlogUsecase>(),
+        getAllBlogsUsecase: getIt<GetAllBlogsUsecase>(),
       ));
 }
