@@ -13,4 +13,6 @@ abstract interface class BlogRepository {
     required String posterId,
     List<String>? topics,
   });
+
+  Future<Either<AppException, List<BlogEntity>>> getAllBlogs();
 }
