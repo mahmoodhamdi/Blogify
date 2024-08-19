@@ -29,3 +29,10 @@ final class BlogUpload extends BlogEvent {
         posterId,
       ];
 }
+
+class GetAllBlogsEvent extends BlogEvent {
+  const GetAllBlogsEvent();
+
+  @override
+  List<Object> get props => [];
+}
