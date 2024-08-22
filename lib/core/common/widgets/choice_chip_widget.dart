@@ -1,3 +1,4 @@
+import 'package:blogify/core/constants/constants.dart';
 import 'package:blogify/core/theme/app_pallete.dart';
 import 'package:flutter/material.dart';
 
@@ -12,15 +13,7 @@ class ChoiceChipWidget extends StatefulWidget {
 
 class _ChoiceChipWidgetState extends State<ChoiceChipWidget> {
   final Set<int> _selectedIndices = {};
-  final List<String> _options = [
-    'Nature',
-    'Tech',
-    'Traditions',
-    'Philosophy',
-    'Art',
-    'Leadership',
-    'Food'
-  ];
+  final List<String> _options = Constants.topics;
 
   @override
   Widget build(BuildContext context) {

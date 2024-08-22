@@ -1,38 +1,22 @@
 part of 'blog_bloc.dart';
 
-abstract class BlogEvent extends Equatable {
-  const BlogEvent();
-
-  @override
-  List<Object> get props => [];
-}
+@immutable
+sealed class BlogEvent {}
 
 final class BlogUpload extends BlogEvent {
-  final File? image;
+  final String posterId;
   final String title;
   final String content;
-  final String posterId;
-  final List<String>? topics;
+  final File image;
+  final List<String> topics;
 
-  const BlogUpload({
-    this.image,
+  BlogUpload({
+    required this.posterId,
     required this.title,
     required this.content,
-    required this.posterId,
-    this.topics,
+    required this.image,
+    required this.topics,
   });
-
-  @override
-  List<Object> get props => [
-        title,
-        content,
-        posterId,
-      ];
 }
 
-class GetAllBlogsEvent extends BlogEvent {
-  const GetAllBlogsEvent();
-
-  @override
-  List<Object> get props => [];
-}
+final class BlogFetchAllBlogs extends BlogEvent {}
