@@ -74,13 +74,17 @@ class BlogViewPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: CachedNetworkImage(
-                  fit: BoxFit.cover,
-                  imageUrl: blog.imageUrl,
-                  placeholder: (context, url) => const Loader(),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
+              Align(
+                alignment: Alignment.center,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: CachedNetworkImage(
+                    fit: BoxFit.cover,
+                    imageUrl: blog.imageUrl,
+                    placeholder: (context, url) => const Loader(),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
