@@ -1,12 +1,16 @@
-import 'package:blogify/core/error/exceptions.dart';
-import 'package:blogify/features/auth/domain/entities/user_entity.dart';
+import 'package:blogify/core/error/failures.dart';
+import 'package:blogify/core/common/entities/user.dart';
 import 'package:dartz/dartz.dart';
-
+ 
 abstract interface class AuthRepository {
-  Future<Either<AppException, UserEntity>> signUpWithEmailAndPassword(
-      {required String name, required String email, required String password});
-  Future<Either<AppException, UserEntity>> signInWithEmailAndPassword(
-      {required String email, required String password});
-
-  Future<Either<AppException, UserEntity?>> getCurrentUserData();
+  Future<Either<Failure, User>> signUpWithEmailPassword({
+    required String name,
+    required String email,
+    required String password,
+  });
+  Future<Either<Failure, User>> loginWithEmailPassword({
+    required String email,
+    required String password,
+  });
+  Future<Either<Failure, User>> currentUser();
 }

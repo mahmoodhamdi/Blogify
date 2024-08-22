@@ -1,19 +1,29 @@
-import 'package:blogify/features/auth/domain/entities/user_entity.dart';
+import 'package:blogify/core/common/entities/user.dart';
 
-class UserModel extends UserEntity {
-  const UserModel(
-      {required super.email, required super.name, required super.id})
-      : super();
+class UserModel extends User {
+  UserModel({
+    required super.id,
+    required super.email,
+    required super.name,
+  });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
+  factory UserModel.fromJson(Map<String, dynamic> map) {
     return UserModel(
-        email: json['email'] ?? '',
-        name: json['name'] ?? '',
-        id: json['id'] ?? '');
+      id: map['id'] ?? '',
+      email: map['email'] ?? '',
+      name: map['name'] ?? '',
+    );
   }
 
-  UserModel copyWith({String? email, String? name, String? id}) {
+  UserModel copyWith({
+    String? id,
+    String? email,
+    String? name,
+  }) {
     return UserModel(
-        email: email ?? this.email, name: name ?? this.name, id: id ?? this.id);
+      id: id ?? this.id,
+      email: email ?? this.email,
+      name: name ?? this.name,
+    );
   }
 }

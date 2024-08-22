@@ -1,12 +1,18 @@
 import 'package:blogify/core/common/widgets/loader.dart';
 import 'package:blogify/core/theme/app_pallete.dart';
 import 'package:blogify/core/utils/calculate_reading_time.dart';
-import 'package:blogify/features/blog/domain/entities/blog_entity.dart';
+import 'package:blogify/core/utils/format_date.dart';
+import 'package:blogify/features/blog/domain/entities/blog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class BlogViewPage extends StatelessWidget {
-  final BlogEntity blog;
+  static route(Blog blog) => MaterialPageRoute(
+        builder: (context) => BlogViewPage(
+          blog: blog,
+        ),
+      );
+  final Blog blog;
   const BlogViewPage({
     super.key,
     required this.blog,
@@ -58,9 +64,7 @@ class BlogViewPage extends StatelessWidget {
               const SizedBox(height: 5),
               // You can uncomment and adjust the following block if needed
               Text(
-                //   '${formatDateBydMMMYYYY(blog.date)}
-
-                '  ${calculateReadingTime(blog.content)} min',
+                '${formatDateBydMMMYYYY(blog.updatedAt)}. ${calculateReadingTime(blog.content)} min',
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   color: isDarkMode
@@ -74,7 +78,7 @@ class BlogViewPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
                 child: CachedNetworkImage(
                   fit: BoxFit.cover,
-                  imageUrl: blog.imageUrl!,
+                  imageUrl: blog.imageUrl,
                   placeholder: (context, url) => const Loader(),
                   errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
