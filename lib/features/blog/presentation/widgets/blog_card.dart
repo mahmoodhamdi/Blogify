@@ -1,11 +1,11 @@
-import 'package:blogify/core/routes/routes.dart';
 import 'package:blogify/core/theme/app_pallete.dart';
 import 'package:blogify/core/utils/calculate_reading_time.dart';
-import 'package:blogify/features/blog/domain/entities/blog_entity.dart';
+import 'package:blogify/features/blog/domain/entities/blog.dart';
+import 'package:blogify/features/blog/presentation/pages/blog_viewer_page.dart';
 import 'package:flutter/material.dart';
 
 class BlogCard extends StatelessWidget {
-  final BlogEntity blog;
+  final Blog blog;
   final int index; // Added index to determine the color
 
   const BlogCard({
@@ -23,10 +23,11 @@ class BlogCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, Routes.blogViewPage, arguments: blog);
+        Navigator.push(context, BlogViewPage.route(blog));
       },
       child: Container(
-        height: 200,
+        height: MediaQuery.of(context).size.height * 0.25,
+        width: double.infinity,
         margin: const EdgeInsets.all(16).copyWith(bottom: 4),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -43,7 +44,7 @@ class BlogCard extends StatelessWidget {
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
-                    children: blog.topics!
+                    children: blog.topics
                         .map(
                           (e) => Padding(
                             padding: const EdgeInsets.all(5.0),
