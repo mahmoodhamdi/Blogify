@@ -13,6 +13,15 @@
   - [Features](#features)
   - [Key Features](#key-features)
   - [Project Structure](#project-structure)
+  - [Supabase Backend Structure](#supabase-backend-structure)
+    - [Overview](#overview)
+    - [Database Schema](#database-schema)
+    - [Database Tables and Policies](#database-tables-and-policies)
+      - [1. Profiles Table](#1-profiles-table)
+      - [2. Blogs Table](#2-blogs-table)
+      - [3. Storage for Blog Images](#3-storage-for-blog-images)
+    - [Automatic Profile Creation on User Signup](#automatic-profile-creation-on-user-signup)
+    - [Contributions and Further Information](#contributions-and-further-information)
   - [Installation](#installation)
   - [Contributing](#contributing)
 
@@ -103,7 +112,7 @@
 
 ## Project Structure
 
-Here's a detailed visualization of the project structure:
+Detailed visualization of the project structure:
 
 ```markdown
 Blogify
@@ -198,6 +207,115 @@ Blogify
 │   ├── init_dependencies.main.dart
 │   └── main.dart
 ```
+
+---
+
+## Supabase Backend Structure
+
+### Overview
+
+Blogify uses Supabase as its backend, providing seamless authentication, database management, and storage functionalities. Below is an outline of the key database tables, policies, and SQL queries implemented in the project.
+
+### Database Schema
+
+![Capture](https://github.com/user-attachments/assets/d9578a3e-2048-4689-b2b0-7b4d3bfb3227)
+
+### Database Tables and Policies
+
+#### 1. Profiles Table
+
+The `profiles` table stores user profile information.
+
+```sql
+CREATE TABLE profiles (
+  id UUID REFERENCES auth.users NOT NULL PRIMARY KEY,
+  updated_at TIMESTAMP WITH TIME ZONE,
+  name TEXT,
+  
+  CONSTRAINT name_length CHECK (char_length(name) >= 3)
+);
+
+-- Enable Row Level Security (RLS) on the profiles table
+ALTER TABLE profiles
+  ENABLE ROW LEVEL SECURITY;
+
+-- Policies
+CREATE POLICY "Public profiles are viewable by everyone." ON profiles
+  FOR SELECT USING (true);
+
+CREATE POLICY "Users can insert their own profile." ON profiles
+  FOR INSERT WITH CHECK ((SELECT auth.uid()) = id);
+
+CREATE POLICY "Users can update their own profile." ON profiles
+  FOR UPDATE USING ((SELECT auth.uid()) = id);
+```
+
+#### 2. Blogs Table
+
+The `blogs` table stores the blog posts created by users.
+
+```sql
+-- Enable Row Level Security (RLS) on the blogs table
+ALTER TABLE blogs
+  ENABLE ROW LEVEL SECURITY;
+
+-- Policies
+CREATE POLICY "Public blogs are viewable by everyone." ON blogs
+  FOR SELECT USING (true);
+
+CREATE POLICY "Users can insert their own blogs." ON blogs
+  FOR INSERT WITH CHECK ((SELECT auth.uid()) = id);
+
+CREATE POLICY "Users can update their own blogs." ON blogs
+  FOR UPDATE USING ((SELECT auth.uid()) = id);
+```
+
+#### 3. Storage for Blog Images
+
+Blogify uses Supabase storage for handling blog cover images.
+
+```sql
+-- Create a storage bucket for blog images
+INSERT INTO storage.buckets (id, name)
+  VALUES ('blog_images', 'blog_images');
+
+-- Policies for storage access control
+CREATE POLICY "Blog images are publicly accessible." ON storage.objects
+  FOR SELECT USING (bucket_id = 'blog_images');
+
+CREATE POLICY "Anyone can upload a blog image." ON storage.objects
+  FOR INSERT WITH CHECK (bucket_id = 'blog_images');
+
+CREATE POLICY "Anyone can update their own blog images." ON storage.objects
+  FOR UPDATE USING ((SELECT auth.uid()) = owner) WITH CHECK (bucket_id = 'blog_images');
+```
+
+### Automatic Profile Creation on User Signup
+
+A trigger and function are implemented to automatically create a profile entry when a new user signs up.
+
+```sql
+-- Function to handle new user signup
+CREATE FUNCTION public.handle_new_user()
+RETURNS TRIGGER
+SET search_path = ''
+AS $$
+BEGIN
+  INSERT INTO public.profiles (id, name)
+  VALUES (new.id, new.raw_user_meta_data->>'name');
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger to execute the function on user creation
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
+```
+
+### Contributions and Further Information
+
+If you would like to contribute or require more detailed explanations about the Supabase setup, feel free to reach out or refer to the [Supabase documentation](https://supabase.com/docs/guides/getting-started/quickstarts/flutter).
 
 ---
 
