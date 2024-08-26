@@ -218,20 +218,20 @@ Blogify uses Supabase as its backend, providing seamless authentication, databas
 
 ### Database Schema
 
-![Capture](https://github.com/user-attachments/assets/d9578a3e-2048-4689-b2b0-7b4d3bfb3227)
+![Database Schema](https://github.com/user-attachments/assets/d9578a3e-2048-4689-b2b0-7b4d3bfb3227)
 
 ### Database Tables and Policies
 
 #### 1. Profiles Table
 
-The `profiles` table stores user profile information.
+The profiles table stores user profile information.
 
 ```sql
 CREATE TABLE profiles (
   id UUID REFERENCES auth.users NOT NULL PRIMARY KEY,
   updated_at TIMESTAMP WITH TIME ZONE,
   name TEXT,
-  
+
   CONSTRAINT name_length CHECK (char_length(name) >= 3)
 );
 
@@ -252,9 +252,19 @@ CREATE POLICY "Users can update their own profile." ON profiles
 
 #### 2. Blogs Table
 
-The `blogs` table stores the blog posts created by users.
+The blogs table stores the blog posts created by users.
 
 ```sql
+CREATE TABLE blogs (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  poster_id UUID REFERENCES auth.users NOT NULL,
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  image_url TEXT,
+  topics _TEXT,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Enable Row Level Security (RLS) on the blogs table
 ALTER TABLE blogs
   ENABLE ROW LEVEL SECURITY;
@@ -264,10 +274,10 @@ CREATE POLICY "Public blogs are viewable by everyone." ON blogs
   FOR SELECT USING (true);
 
 CREATE POLICY "Users can insert their own blogs." ON blogs
-  FOR INSERT WITH CHECK ((SELECT auth.uid()) = id);
+  FOR INSERT WITH CHECK ((SELECT auth.uid()) = poster_id);
 
 CREATE POLICY "Users can update their own blogs." ON blogs
-  FOR UPDATE USING ((SELECT auth.uid()) = id);
+  FOR UPDATE USING ((SELECT auth.uid()) = poster_id);
 ```
 
 #### 3. Storage for Blog Images
@@ -316,8 +326,6 @@ CREATE TRIGGER on_auth_user_created
 ### Contributions and Further Information
 
 If you would like to contribute or require more detailed explanations about the Supabase setup, feel free to reach out or refer to the [Supabase documentation](https://supabase.com/docs/guides/getting-started/quickstarts/flutter).
-
----
 
 ## Installation
 
