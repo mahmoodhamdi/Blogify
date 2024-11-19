@@ -71,7 +71,7 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
         appBar: AppBar(),
         body: SingleChildScrollView(
           padding: EdgeInsets.symmetric(
-               horizontal: MediaQuery.of(context).size.width * 0.05),
+              horizontal: MediaQuery.of(context).size.width * 0.05),
           child: Form(
             key: formKey,
             child: Column(
