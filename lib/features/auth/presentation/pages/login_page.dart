@@ -1,6 +1,7 @@
 import 'package:blogify/core/common/widgets/gradient_button.dart';
 import 'package:blogify/core/common/widgets/loader.dart';
 import 'package:blogify/core/theme/app_pallete.dart';
+import 'package:blogify/core/utils/hide_keyboard.dart';
 import 'package:blogify/core/utils/show_snackbar.dart';
 import 'package:blogify/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blogify/features/auth/presentation/pages/signup_page.dart';
@@ -83,6 +84,8 @@ class _LoginPageState extends State<LoginPage> {
                 return GradientButton(
                   buttonText: 'Sign in',
                   onPressed: () {
+                    hideKeyboard();
+
                     if (formKey.currentState!.validate()) {
                       context.read<AuthBloc>().add(
                             AuthLogin(
