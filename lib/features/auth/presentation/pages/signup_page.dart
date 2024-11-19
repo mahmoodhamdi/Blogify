@@ -1,6 +1,7 @@
 import 'package:blogify/core/common/widgets/gradient_button.dart';
 import 'package:blogify/core/common/widgets/loader.dart';
 import 'package:blogify/core/theme/app_pallete.dart';
+import 'package:blogify/core/utils/hide_keyboard.dart';
 import 'package:blogify/core/utils/show_snackbar.dart';
 import 'package:blogify/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blogify/features/auth/presentation/pages/login_page.dart';
@@ -36,7 +37,6 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       
         body: SingleChildScrollView(
             padding: EdgeInsets.symmetric(
                 vertical: MediaQuery.of(context).size.height * 0.3,
@@ -93,6 +93,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       return GradientButton(
                         buttonText: 'Sign Up',
                         onPressed: () {
+                         hideKeyboard();
                           if (formKey.currentState!.validate()) {
                             context.read<AuthBloc>().add(
                                   AuthSignUp(
@@ -122,7 +123,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 .textTheme
                                 .titleMedium
                                 ?.copyWith(
-                                       color: Theme.of(context).brightness ==
+                                  color: Theme.of(context).brightness ==
                                           Brightness.dark
                                       ? AppPalette.darkAccent
                                       : AppPalette.lightAccent,
