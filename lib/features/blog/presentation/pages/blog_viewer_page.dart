@@ -7,16 +7,19 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class BlogViewPage extends StatefulWidget {
-  static route(Blog blog) => MaterialPageRoute(
+  static route(Blog blog, Color cardColor) => MaterialPageRoute(
         builder: (context) => BlogViewPage(
           blog: blog,
+          cardColor: cardColor,
         ),
       );
   final Blog blog;
+  final Color cardColor;
 
   const BlogViewPage({
     super.key,
     required this.blog,
+    required this.cardColor,
   });
 
   @override
@@ -88,10 +91,8 @@ class _BlogViewPageState extends State<BlogViewPage> {
                 fit: BoxFit.cover,
               ),
             ),
-            backgroundColor:
-                isDarkMode ? AppPalette.darkPrimary : AppPalette.lightPrimary,
+            backgroundColor: widget.cardColor,
           ),
-
           // Content Section
           SliverToBoxAdapter(
             child: Padding(
