@@ -23,7 +23,11 @@ class BlogCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, BlogViewPage.route(blog));
+       Navigator.push(
+          context,
+          BlogViewPage.route(blog, color),
+        );
+
       },
       child: Container(
         height: MediaQuery.of(context).size.height * 0.25,
