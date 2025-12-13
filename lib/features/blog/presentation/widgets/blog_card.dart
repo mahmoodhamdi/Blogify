@@ -55,8 +55,8 @@ class BlogCard extends StatelessWidget {
                             child: Chip(
                               label: Text(e),
                               backgroundColor: isDarkMode
-                                  ? Colors.black.withOpacity(0.8)
-                                  : Colors.white.withOpacity(0.8),
+                                  ? Colors.black.withValues(alpha: 0.8)
+                                  : Colors.white.withValues(alpha: 0.8),
                               labelStyle: TextStyle(
                                 color: isDarkMode ? Colors.white : Colors.black,
                               ),

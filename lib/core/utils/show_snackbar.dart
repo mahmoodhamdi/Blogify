@@ -21,7 +21,6 @@ void showSnackBar({
       case SnackBarType.warning:
         return AppPalette.warning;
       case SnackBarType.info:
-      default:
         return AppPalette.info;
     }
   }
@@ -35,7 +34,6 @@ void showSnackBar({
       case SnackBarType.warning:
         return Icons.warning_amber_rounded;
       case SnackBarType.info:
-      default:
         return Icons.info_outline;
     }
   }

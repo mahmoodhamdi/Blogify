@@ -7,7 +7,7 @@ class Loader extends StatefulWidget {
   const Loader({super.key, this.size = 50.0});
 
   @override
-  _LoaderState createState() => _LoaderState();
+  State<Loader> createState() => _LoaderState();
 }
 
 class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {

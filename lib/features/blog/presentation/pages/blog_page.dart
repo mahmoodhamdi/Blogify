@@ -1,5 +1,4 @@
 import 'package:blogify/core/common/widgets/loader.dart';
-import 'package:blogify/core/theme/app_pallete.dart';
 import 'package:blogify/core/utils/show_snackbar.dart';
 import 'package:blogify/features/blog/presentation/bloc/blog_bloc.dart';
 import 'package:blogify/features/blog/presentation/pages/add_new_blog_page.dart';
@@ -8,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BlogPage extends StatefulWidget {
-  static route() => MaterialPageRoute(
+  static MaterialPageRoute<dynamic> route() => MaterialPageRoute(
         builder: (context) => const BlogPage(),
       );
   const BlogPage({super.key});
@@ -41,11 +40,6 @@ class _BlogPageState extends State<BlogPage>
 
   @override
   Widget build(BuildContext context) {
-    final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
-    final colorPalette = isDarkTheme
-        ? BlogColorPaletteDark.colors
-        : BlogColorPaletteLight.colors;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Blogify'),
@@ -84,8 +78,6 @@ class _BlogPageState extends State<BlogPage>
               itemCount: state.blogs.length,
               itemBuilder: (context, index) {
                 final blog = state.blogs[index];
-                final backgroundColor =
-                    colorPalette[index % colorPalette.length];
 
                 return AnimatedBuilder(
                   animation: _fabController,
@@ -120,7 +112,7 @@ class _BlogPageState extends State<BlogPage>
                   Icons.search_off,
                   size: 80,
                   color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                      Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -129,7 +121,7 @@ class _BlogPageState extends State<BlogPage>
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.7),
+                            .withValues(alpha: 0.7),
                         fontSize: 18,
                       ),
                 ),

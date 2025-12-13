@@ -9,7 +9,7 @@ class BlogifySplashScreen extends StatefulWidget {
   const BlogifySplashScreen({super.key});
 
   @override
-  _BlogifySplashScreenState createState() => _BlogifySplashScreenState();
+  State<BlogifySplashScreen> createState() => _BlogifySplashScreenState();
 }
 
 class _BlogifySplashScreenState extends State<BlogifySplashScreen>

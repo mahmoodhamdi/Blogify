@@ -5,31 +5,34 @@ publish_to: "none"
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.5.0
+  sdk: ^3.10.0
 
 dependencies:
-  app_links:
-  cached_network_image: 
-  cupertino_icons: 
-  dartz: 
-  dotted_border: 
-  equatable: 
+  app_links: ^6.4.0
+  cached_network_image: ^3.4.1
+  cupertino_icons: ^1.0.8
+  dartz: ^0.10.1
+  dotted_border: ^2.1.0
+  equatable: ^2.0.7
   flutter:
     sdk: flutter
-  flutter_bloc: 
-  get_it: ^7.7.0
-  hive: 
-  image_picker: 
-  internet_connection_checker_plus: 
-  intl: 
-  path_provider: 
-  supabase_flutter: 
-  uuid: 
+  flutter_bloc: ^9.1.0
+  flutter_dotenv: ^5.2.1
+  get_it: ^8.0.3
+  hive: ^2.2.3
+  image_picker: ^1.1.2
+  internet_connection_checker_plus: ^2.7.1
+  intl: ^0.20.2
+  path_provider: ^2.1.5
+  share_plus: ^10.1.4
+  supabase_flutter: ^2.9.0
+  uuid: ^4.5.1
 
 dev_dependencies:
-  flutter_lints: 
+  flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
+  mocktail: ^1.0.4
 
 flutter:
 
@@ -37,3 +40,4 @@ flutter:
 
   assets:
     - assets/Designer.JPG
+    - .env

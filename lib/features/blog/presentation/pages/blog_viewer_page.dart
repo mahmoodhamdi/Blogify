@@ -7,7 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class BlogViewPage extends StatefulWidget {
-  static route(Blog blog, Color cardColor) => MaterialPageRoute(
+  static MaterialPageRoute<dynamic> route(Blog blog, Color cardColor) => MaterialPageRoute(
         builder: (context) => BlogViewPage(
           blog: blog,
           cardColor: cardColor,
@@ -127,7 +127,7 @@ class _BlogViewPageState extends State<BlogViewPage> {
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 16,
-                          color: textColor.withOpacity(0.7),
+                          color: textColor.withValues(alpha: 0.7),
                         ),
                       ),
                       const Spacer(),
@@ -136,7 +136,7 @@ class _BlogViewPageState extends State<BlogViewPage> {
                         style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
-                          color: textColor.withOpacity(0.6),
+                          color: textColor.withValues(alpha: 0.6),
                         ),
                       ),
                     ],

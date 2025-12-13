@@ -8,7 +8,7 @@ class ChoiceChipWidget extends StatefulWidget {
   const ChoiceChipWidget({super.key, required this.onSelectionChanged});
 
   @override
-  _ChoiceChipWidgetState createState() => _ChoiceChipWidgetState();
+  State<ChoiceChipWidget> createState() => _ChoiceChipWidgetState();
 }
 
 class _ChoiceChipWidgetState extends State<ChoiceChipWidget> {
@@ -55,8 +55,8 @@ class _ChoiceChipWidgetState extends State<ChoiceChipWidget> {
               color: _selectedIndices.contains(index)
                   ? (isDarkMode ? AppPalette.darkText : AppPalette.lightText)
                   : (isDarkMode
-                      ? AppPalette.darkText.withOpacity(0.7)
-                      : AppPalette.lightText.withOpacity(0.7)),
+                      ? AppPalette.darkText.withValues(alpha: 0.7)
+                      : AppPalette.lightText.withValues(alpha: 0.7)),
               fontWeight: FontWeight.bold,
             ),
             shape: RoundedRectangleBorder(
