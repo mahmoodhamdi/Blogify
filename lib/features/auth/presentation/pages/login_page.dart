@@ -3,6 +3,7 @@ import 'package:blogify/core/common/widgets/loader.dart';
 import 'package:blogify/core/theme/app_pallete.dart';
 import 'package:blogify/core/utils/hide_keyboard.dart';
 import 'package:blogify/core/utils/show_snackbar.dart';
+import 'package:blogify/core/validators/validation.dart';
 import 'package:blogify/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blogify/features/auth/presentation/pages/signup_page.dart';
 import 'package:blogify/features/auth/presentation/widgets/auth_field.dart';
@@ -11,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginPage extends StatefulWidget {
-  static route() => MaterialPageRoute(
+  static MaterialPageRoute<dynamic> route() => MaterialPageRoute(
         builder: (context) => const LoginPage(),
       );
   const LoginPage({super.key});
@@ -55,12 +56,15 @@ class _LoginPageState extends State<LoginPage> {
               AuthField(
                 hintText: 'Email',
                 controller: emailController,
+                validator: FieldValidator.validateEmail,
               ),
               const SizedBox(height: 15),
               AuthField(
                 hintText: 'Password',
                 controller: passwordController,
                 isObscureText: true,
+                validator: (value) =>
+                    FieldValidator.validateEmpty(value, 'Password'),
               ),
               const SizedBox(height: 20),
               BlocConsumer<AuthBloc, AuthState>(listener: (context, state) {
@@ -70,6 +74,7 @@ class _LoginPageState extends State<LoginPage> {
                       context: context,
                       type: SnackBarType.error);
                 } else if (state is AuthSuccess) {
+                  if (!mounted) return;
                   Navigator.pushAndRemoveUntil(
                     context,
                     BlogPage.route(),

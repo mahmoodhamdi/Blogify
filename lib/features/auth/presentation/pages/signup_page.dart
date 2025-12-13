@@ -3,6 +3,7 @@ import 'package:blogify/core/common/widgets/loader.dart';
 import 'package:blogify/core/theme/app_pallete.dart';
 import 'package:blogify/core/utils/hide_keyboard.dart';
 import 'package:blogify/core/utils/show_snackbar.dart';
+import 'package:blogify/core/validators/validation.dart';
 import 'package:blogify/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blogify/features/auth/presentation/pages/login_page.dart';
 import 'package:blogify/features/auth/presentation/widgets/auth_field.dart';
@@ -11,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignUpPage extends StatefulWidget {
-  static route() => MaterialPageRoute(
+  static MaterialPageRoute<dynamic> route() => MaterialPageRoute(
         builder: (context) => const SignUpPage(),
       );
   const SignUpPage({super.key});
@@ -57,17 +58,20 @@ class _SignUpPageState extends State<SignUpPage> {
                   AuthField(
                     hintText: 'Name',
                     controller: nameController,
+                    validator: FieldValidator.validateName,
                   ),
                   const SizedBox(height: 15),
                   AuthField(
                     hintText: 'Email',
                     controller: emailController,
+                    validator: FieldValidator.validateEmail,
                   ),
                   const SizedBox(height: 15),
                   AuthField(
                     hintText: 'Password',
                     controller: passwordController,
                     isObscureText: true,
+                    validator: FieldValidator.validatePassword,
                   ),
                   const SizedBox(height: 20),
                   BlocConsumer<AuthBloc, AuthState>(
@@ -78,6 +82,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             context: context,
                             type: SnackBarType.error);
                       } else if (state is AuthSuccess) {
+                        if (!mounted) return;
                         Navigator.pushAndRemoveUntil(
                           context,
                           BlogPage.route(),
