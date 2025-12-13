@@ -37,24 +37,24 @@ void main() {
 
     test('should return failure when deletion fails', () async {
       // arrange
-      final failure = Failure('Failed to delete blog');
+      const failure = ServerFailure(message: 'Failed to delete blog');
       when(() => mockBlogRepository.deleteBlog(blogId: testBlogId))
-          .thenAnswer((_) async => Left(failure));
+          .thenAnswer((_) async => const Left(failure));
 
       // act
       final result =
           await usecase(const DeleteBlogParams(blogId: testBlogId));
 
       // assert
-      expect(result, Left(failure));
+      expect(result, const Left(failure));
       verify(() => mockBlogRepository.deleteBlog(blogId: testBlogId)).called(1);
     });
 
     test('should return failure when no internet connection', () async {
       // arrange
-      final failure = Failure('No internet connection');
+      const failure = NetworkFailure();
       when(() => mockBlogRepository.deleteBlog(blogId: testBlogId))
-          .thenAnswer((_) async => Left(failure));
+          .thenAnswer((_) async => const Left(failure));
 
       // act
       final result =
@@ -63,16 +63,16 @@ void main() {
       // assert
       expect(result.isLeft(), true);
       result.fold(
-        (l) => expect(l.message, 'No internet connection'),
+        (l) => expect(l, isA<NetworkFailure>()),
         (r) => fail('Should return failure'),
       );
     });
 
     test('should return failure when blog not found', () async {
       // arrange
-      final failure = Failure('Blog not found');
+      const failure = NotFoundFailure(message: 'Blog not found');
       when(() => mockBlogRepository.deleteBlog(blogId: 'non-existent-id'))
-          .thenAnswer((_) async => Left(failure));
+          .thenAnswer((_) async => const Left(failure));
 
       // act
       final result = await usecase(
@@ -88,9 +88,9 @@ void main() {
 
     test('should return failure when user is not authorized', () async {
       // arrange
-      final failure = Failure('Not authorized to delete this blog');
+      const failure = AuthorizationFailure(message: 'Not authorized to delete this blog');
       when(() => mockBlogRepository.deleteBlog(blogId: testBlogId))
-          .thenAnswer((_) async => Left(failure));
+          .thenAnswer((_) async => const Left(failure));
 
       // act
       final result =

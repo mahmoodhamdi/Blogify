@@ -109,14 +109,14 @@ void main() {
 
     test('should return failure when update fails', () async {
       // arrange
-      final failure = Failure('Failed to update blog');
+      const failure = ServerFailure(message: 'Failed to update blog');
       when(() => mockBlogRepository.updateBlog(
             blogId: testBlogId,
             title: testTitle,
             content: testContent,
             topics: testTopics,
             image: null,
-          )).thenAnswer((_) async => Left(failure));
+          )).thenAnswer((_) async => const Left(failure));
 
       // act
       final result = await usecase(
@@ -129,19 +129,19 @@ void main() {
       );
 
       // assert
-      expect(result, Left(failure));
+      expect(result, const Left(failure));
     });
 
     test('should return failure when no internet connection', () async {
       // arrange
-      final failure = Failure('No internet connection');
+      const failure = NetworkFailure();
       when(() => mockBlogRepository.updateBlog(
             blogId: testBlogId,
             title: testTitle,
             content: testContent,
             topics: testTopics,
             image: null,
-          )).thenAnswer((_) async => Left(failure));
+          )).thenAnswer((_) async => const Left(failure));
 
       // act
       final result = await usecase(
@@ -156,21 +156,21 @@ void main() {
       // assert
       expect(result.isLeft(), true);
       result.fold(
-        (l) => expect(l.message, 'No internet connection'),
+        (l) => expect(l, isA<NetworkFailure>()),
         (r) => fail('Should return failure'),
       );
     });
 
     test('should return failure when user is not authorized', () async {
       // arrange
-      final failure = Failure('Not authorized to update this blog');
+      const failure = AuthorizationFailure(message: 'Not authorized to update this blog');
       when(() => mockBlogRepository.updateBlog(
             blogId: testBlogId,
             title: testTitle,
             content: testContent,
             topics: testTopics,
             image: null,
-          )).thenAnswer((_) async => Left(failure));
+          )).thenAnswer((_) async => const Left(failure));
 
       // act
       final result = await usecase(

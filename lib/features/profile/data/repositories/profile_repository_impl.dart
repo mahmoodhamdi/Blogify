@@ -1,4 +1,3 @@
-import 'package:blogify/core/constants/constants.dart';
 import 'package:blogify/core/error/exceptions.dart';
 import 'package:blogify/core/error/failures.dart';
 import 'package:blogify/core/network/connection_checker.dart';
@@ -24,7 +23,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }) async {
     try {
       if (!await connectionChecker.isConnected) {
-        return left(Failure(Constants.noConnectionErrorMessage));
+        return left(const NetworkFailure());
       }
       final blogs = await profileRemoteDataSource.getUserBlogs(
         userId: userId,
@@ -33,7 +32,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
       );
       return right(blogs);
     } on ServerException catch (e) {
-      return left(Failure(e.message));
+      return left(ServerFailure(message: e.message));
     }
   }
 }

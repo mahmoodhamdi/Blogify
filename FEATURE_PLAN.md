@@ -73,51 +73,45 @@ supabaseClient
 
 ## 3. Improved Error Handling
 
-### Current State
-- Basic error handling with `Failure` class and `ServerException`
-- SnackBar notifications for errors
+### Status: COMPLETED
 
-### Improvements Needed
-1. **Typed Failures**: Create specific failure types (NetworkFailure, AuthFailure, etc.)
-2. **Better error messages**: User-friendly error messages instead of raw exceptions
-3. **Retry mechanisms**: Add retry buttons for failed operations
-4. **Offline handling**: Better UX when offline
-
-### Implementation Steps
-1. Create typed failure classes in `lib/core/error/failures.dart`:
-   - `NetworkFailure` - No internet connection
-   - `AuthFailure` - Authentication errors
-   - `ServerFailure` - Server-side errors
+### What Was Implemented
+1. **Typed Failures** (`lib/core/error/failures.dart`):
+   - `NetworkFailure` - No internet connection (isRetryable: true)
+   - `ServerFailure` - Server-side errors with optional status code
+   - `AuthFailure` - Authentication errors (isRetryable: false)
+   - `AuthorizationFailure` - Not allowed to perform action
+   - `ValidationFailure` - Input validation with field errors
    - `CacheFailure` - Local storage errors
-   - `ValidationFailure` - Input validation errors
+   - `NotFoundFailure` - Resource not found
+   - `UnknownFailure` - Unexpected errors
 
-2. Update repositories to return specific failure types
+2. **Typed Exceptions** (`lib/core/error/exceptions.dart`):
+   - `AppException` - Base sealed class
+   - `ServerException` - With optional statusCode
+   - `AppAuthException` - Auth errors (renamed to avoid Supabase conflict)
+   - `AuthorizationException` - Permission errors
+   - `NetworkException` - Network errors
+   - `CacheException` - Cache errors
+   - `NotFoundException` - Not found errors
 
-3. Create error mapping utility to convert exceptions to failures
+3. **Error Mapper** (`lib/core/error/error_mapper.dart`):
+   - Maps exceptions to appropriate failure types
+   - Provides user-friendly error messages
+   - Pattern matches on server error messages
 
-4. Update BLoCs to handle different failure types with appropriate messages
+4. **Updated Repositories**:
+   - BlogRepositoryImpl - Uses NetworkFailure, ServerFailure
+   - ProfileRepositoryImpl - Uses NetworkFailure, ServerFailure
+   - AuthRepositoryImpl - Uses NetworkFailure, AuthFailure, ServerFailure
 
-5. Add retry functionality to error states in UI
-
-6. Write tests for error handling scenarios
-
-### Error UI Pattern
-```dart
-if (state is ProfileFailure) {
-  return ErrorView(
-    message: state.message,
-    icon: _getIconForFailureType(state.failureType),
-    onRetry: _fetchUserBlogs,
-    showRetry: state.isRetryable,
-  );
-}
-```
+5. **Updated Tests** - All tests updated to use typed failures
 
 ---
 
 ## Execution Order
-1. Fix Profile feature bug + add tests
-2. Implement Blog Search
-3. Implement Improved Error Handling
+1. ✅ Fix Profile feature bug + add tests
+2. ✅ Implement Blog Search
+3. ✅ Implement Improved Error Handling
 
-Each feature will be tested and committed separately before moving to the next.
+All features tested and committed separately.

@@ -125,13 +125,13 @@ void main() {
 
     test('should return failure when no internet connection', () async {
       // arrange
-      final failure = Failure('Not connected to a network!');
+      const failure = NetworkFailure();
       when(() => mockBlogRepository.searchBlogs(
             query: 'test',
             topics: null,
             page: 0,
             limit: 10,
-          )).thenAnswer((_) async => Left(failure));
+          )).thenAnswer((_) async => const Left(failure));
 
       // act
       final result = await usecase(const SearchBlogsParams(
@@ -143,20 +143,20 @@ void main() {
       // assert
       expect(result.isLeft(), true);
       result.fold(
-        (l) => expect(l.message, 'Not connected to a network!'),
+        (l) => expect(l, isA<NetworkFailure>()),
         (r) => fail('Should return failure'),
       );
     });
 
     test('should return failure when server error occurs', () async {
       // arrange
-      final failure = Failure('Server error');
+      const failure = ServerFailure(message: 'Server error');
       when(() => mockBlogRepository.searchBlogs(
             query: 'test',
             topics: null,
             page: 0,
             limit: 10,
-          )).thenAnswer((_) async => Left(failure));
+          )).thenAnswer((_) async => const Left(failure));
 
       // act
       final result = await usecase(const SearchBlogsParams(

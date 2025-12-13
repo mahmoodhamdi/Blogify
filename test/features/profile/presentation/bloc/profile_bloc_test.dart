@@ -130,7 +130,7 @@ void main() {
       'emits [ProfileLoading, ProfileFailure] when error occurs',
       build: () {
         when(() => mockGetUserBlogs(any()))
-            .thenAnswer((_) async => Left(Failure('Server error')));
+            .thenAnswer((_) async => const Left(ServerFailure(message: 'Server error')));
         return profileBloc;
       },
       act: (bloc) => bloc.add(ProfileFetchUserBlogs(userId: testUserId)),
@@ -144,13 +144,13 @@ void main() {
       'emits [ProfileLoading, ProfileFailure] when no internet connection',
       build: () {
         when(() => mockGetUserBlogs(any())).thenAnswer(
-            (_) async => Left(Failure('Not connected to a network!')));
+            (_) async => const Left(NetworkFailure()));
         return profileBloc;
       },
       act: (bloc) => bloc.add(ProfileFetchUserBlogs(userId: testUserId)),
       expect: () => [
         const ProfileLoading(),
-        const ProfileFailure('Not connected to a network!'),
+        isA<ProfileFailure>(),
       ],
     );
   });
@@ -227,7 +227,7 @@ void main() {
       'emits ProfileFailure when error occurs during fetch more',
       build: () {
         when(() => mockGetUserBlogs(any()))
-            .thenAnswer((_) async => Left(Failure('Server error')));
+            .thenAnswer((_) async => const Left(ServerFailure(message: 'Server error')));
         return profileBloc;
       },
       seed: () => ProfileLoaded(

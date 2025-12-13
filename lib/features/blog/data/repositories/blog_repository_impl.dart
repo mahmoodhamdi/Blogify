@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:blogify/core/constants/constants.dart';
 import 'package:blogify/core/error/exceptions.dart';
 import 'package:blogify/core/error/failures.dart';
 import 'package:blogify/core/network/connection_checker.dart';
@@ -8,7 +7,7 @@ import 'package:blogify/features/blog/data/models/blog_model.dart';
 import 'package:blogify/features/blog/domain/entities/blog.dart';
 import 'package:blogify/features/blog/domain/repositories/blog_repository.dart';
 import 'package:dartz/dartz.dart';
- import 'package:uuid/uuid.dart';
+import 'package:uuid/uuid.dart';
 
 class BlogRepositoryImpl implements BlogRepository {
   final BlogRemoteDataSource blogRemoteDataSource;
@@ -28,7 +27,7 @@ class BlogRepositoryImpl implements BlogRepository {
   }) async {
     try {
       if (!await (connectionChecker.isConnected)) {
-        return left(Failure(Constants.noConnectionErrorMessage));
+        return left(const NetworkFailure());
       }
       BlogModel blogModel = BlogModel(
         id: const Uuid().v1(),
@@ -52,7 +51,7 @@ class BlogRepositoryImpl implements BlogRepository {
       final uploadedBlog = await blogRemoteDataSource.uploadBlog(blogModel);
       return right(uploadedBlog);
     } on ServerException catch (e) {
-      return left(Failure(e.message));
+      return left(ServerFailure(message: e.message));
     }
   }
 
@@ -68,7 +67,7 @@ class BlogRepositoryImpl implements BlogRepository {
       );
       return right(blogs);
     } on ServerException catch (e) {
-      return left(Failure(e.message));
+      return left(ServerFailure(message: e.message));
     }
   }
 
@@ -76,12 +75,12 @@ class BlogRepositoryImpl implements BlogRepository {
   Future<Either<Failure, void>> deleteBlog({required String blogId}) async {
     try {
       if (!await (connectionChecker.isConnected)) {
-        return left(Failure(Constants.noConnectionErrorMessage));
+        return left(const NetworkFailure());
       }
       await blogRemoteDataSource.deleteBlog(blogId);
       return right(null);
     } on ServerException catch (e) {
-      return left(Failure(e.message));
+      return left(ServerFailure(message: e.message));
     }
   }
 
@@ -95,7 +94,7 @@ class BlogRepositoryImpl implements BlogRepository {
   }) async {
     try {
       if (!await (connectionChecker.isConnected)) {
-        return left(Failure(Constants.noConnectionErrorMessage));
+        return left(const NetworkFailure());
       }
 
       String imageUrl = '';
@@ -123,7 +122,7 @@ class BlogRepositoryImpl implements BlogRepository {
 
       return right(updatedBlog);
     } on ServerException catch (e) {
-      return left(Failure(e.message));
+      return left(ServerFailure(message: e.message));
     }
   }
 
@@ -136,7 +135,7 @@ class BlogRepositoryImpl implements BlogRepository {
   }) async {
     try {
       if (!await (connectionChecker.isConnected)) {
-        return left(Failure(Constants.noConnectionErrorMessage));
+        return left(const NetworkFailure());
       }
       final blogs = await blogRemoteDataSource.searchBlogs(
         query: query,
@@ -146,7 +145,7 @@ class BlogRepositoryImpl implements BlogRepository {
       );
       return right(blogs);
     } on ServerException catch (e) {
-      return left(Failure(e.message));
+      return left(ServerFailure(message: e.message));
     }
   }
 }
