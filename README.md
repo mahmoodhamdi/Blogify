@@ -29,6 +29,7 @@
 ### Authentication
 - [x] User Sign Up with validation
 - [x] User Sign In with validation
+- [x] User Logout with confirmation dialog
 - [x] Current User Session Management
 - [x] Secure password requirements
 
@@ -37,8 +38,9 @@
 - [x] View All Blogs with Pull to Refresh
 - [x] Blog Detail View with reading time
 - [x] Share Blogs via native share sheet
-- [ ] Edit Blogs
-- [ ] Delete Blogs
+- [x] Edit Blogs (owner only)
+- [x] Delete Blogs with confirmation (owner only)
+- [x] Infinite scroll pagination (10 blogs per page)
 
 ### User Interface
 - [x] Professional and modern UI
@@ -329,8 +331,10 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/):
 ## Roadmap
 
 ### Near-term
-- [ ] Edit Blogs functionality
-- [ ] Delete Blogs functionality
+- [x] Edit Blogs functionality
+- [x] Delete Blogs functionality
+- [x] User Logout functionality
+- [x] Pagination with infinite scroll
 - [ ] User Profile pages
 - [ ] Blog search with filters
 
