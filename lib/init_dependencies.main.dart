@@ -6,6 +6,8 @@ Future<void> initDependencies() async {
   _initAuth();
   _initBlog();
   _initProfile();
+  _initComments();
+  _initNotifications();
 
   final supabase = await Supabase.initialize(
     url: AppSecrets.supabaseUrl,
@@ -121,6 +123,21 @@ void _initBlog() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => ToggleLike(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => ToggleBookmark(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => GetBookmarkedBlogs(
+        serviceLocator(),
+      ),
+    )
     // Bloc
     ..registerLazySingleton(
       () => BlogBloc(
@@ -129,6 +146,9 @@ void _initBlog() {
         deleteBlog: serviceLocator(),
         updateBlog: serviceLocator(),
         searchBlogs: serviceLocator(),
+        toggleLike: serviceLocator(),
+        toggleBookmark: serviceLocator(),
+        getBookmarkedBlogs: serviceLocator(),
       ),
     );
 }
@@ -164,6 +184,100 @@ void _initProfile() {
       () => ProfileBloc(
         getUserBlogs: serviceLocator(),
         updateProfile: serviceLocator(),
+      ),
+    );
+}
+
+void _initComments() {
+  // Datasource
+  serviceLocator
+    ..registerFactory<CommentRemoteDataSource>(
+      () => CommentRemoteDataSourceImpl(
+        serviceLocator(),
+      ),
+    )
+    // Repository
+    ..registerFactory<CommentRepository>(
+      () => CommentRepositoryImpl(
+        serviceLocator(),
+        serviceLocator(),
+      ),
+    )
+    // Usecases
+    ..registerFactory(
+      () => GetComments(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => AddComment(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => UpdateComment(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => DeleteComment(
+        serviceLocator(),
+      ),
+    )
+    // Bloc
+    ..registerFactory(
+      () => CommentBloc(
+        getComments: serviceLocator(),
+        addComment: serviceLocator(),
+        updateComment: serviceLocator(),
+        deleteComment: serviceLocator(),
+      ),
+    );
+}
+
+void _initNotifications() {
+  // Datasource
+  serviceLocator
+    ..registerFactory<NotificationRemoteDataSource>(
+      () => NotificationRemoteDataSourceImpl(
+        serviceLocator(),
+      ),
+    )
+    // Repository
+    ..registerFactory<NotificationRepository>(
+      () => NotificationRepositoryImpl(
+        serviceLocator(),
+        serviceLocator(),
+      ),
+    )
+    // Usecases
+    ..registerFactory(
+      () => GetNotifications(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => MarkNotificationRead(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => MarkAllNotificationsRead(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => GetUnreadCount(
+        serviceLocator(),
+      ),
+    )
+    // Bloc
+    ..registerLazySingleton(
+      () => NotificationBloc(
+        getNotifications: serviceLocator(),
+        markNotificationRead: serviceLocator(),
+        markAllNotificationsRead: serviceLocator(),
+        getUnreadCount: serviceLocator(),
       ),
     );
 }

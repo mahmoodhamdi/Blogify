@@ -23,6 +23,32 @@ abstract interface class BlogRemoteDataSource {
     int page = 0,
     int limit = 10,
   });
+
+  Future<BlogModel> toggleLike({
+    required String blogId,
+    required String userId,
+  });
+
+  Future<BlogModel> toggleBookmark({
+    required String blogId,
+    required String userId,
+  });
+
+  Future<List<BlogModel>> getBookmarkedBlogs({
+    required String userId,
+    int page = 0,
+    int limit = 10,
+  });
+
+  Future<bool> isLiked({
+    required String blogId,
+    required String userId,
+  });
+
+  Future<bool> isBookmarked({
+    required String blogId,
+    required String userId,
+  });
 }
 
 class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
@@ -182,6 +208,192 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
               posterName: blog['profiles']['name'],
             ),
           )
+          .toList();
+    } on PostgrestException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<bool> isLiked({
+    required String blogId,
+    required String userId,
+  }) async {
+    try {
+      final result = await supabaseClient
+          .from('likes')
+          .select()
+          .eq('blog_id', blogId)
+          .eq('user_id', userId)
+          .maybeSingle();
+      return result != null;
+    } on PostgrestException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<bool> isBookmarked({
+    required String blogId,
+    required String userId,
+  }) async {
+    try {
+      final result = await supabaseClient
+          .from('bookmarks')
+          .select()
+          .eq('blog_id', blogId)
+          .eq('user_id', userId)
+          .maybeSingle();
+      return result != null;
+    } on PostgrestException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<BlogModel> toggleLike({
+    required String blogId,
+    required String userId,
+  }) async {
+    try {
+      final existingLike = await supabaseClient
+          .from('likes')
+          .select()
+          .eq('blog_id', blogId)
+          .eq('user_id', userId)
+          .maybeSingle();
+
+      if (existingLike != null) {
+        // Unlike - delete the like
+        await supabaseClient
+            .from('likes')
+            .delete()
+            .eq('blog_id', blogId)
+            .eq('user_id', userId);
+      } else {
+        // Like - insert new like
+        await supabaseClient.from('likes').insert({
+          'blog_id': blogId,
+          'user_id': userId,
+        });
+      }
+
+      // Fetch updated blog
+      final blog = await supabaseClient
+          .from('blogs')
+          .select('*, profiles (name)')
+          .eq('id', blogId)
+          .single();
+
+      final isNowLiked = existingLike == null;
+      return BlogModel.fromJson(blog).copyWith(
+        posterName: blog['profiles']['name'],
+        isLiked: isNowLiked,
+      );
+    } on PostgrestException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<BlogModel> toggleBookmark({
+    required String blogId,
+    required String userId,
+  }) async {
+    try {
+      final existingBookmark = await supabaseClient
+          .from('bookmarks')
+          .select()
+          .eq('blog_id', blogId)
+          .eq('user_id', userId)
+          .maybeSingle();
+
+      if (existingBookmark != null) {
+        // Remove bookmark
+        await supabaseClient
+            .from('bookmarks')
+            .delete()
+            .eq('blog_id', blogId)
+            .eq('user_id', userId);
+      } else {
+        // Add bookmark
+        await supabaseClient.from('bookmarks').insert({
+          'blog_id': blogId,
+          'user_id': userId,
+        });
+      }
+
+      // Fetch updated blog
+      final blog = await supabaseClient
+          .from('blogs')
+          .select('*, profiles (name)')
+          .eq('id', blogId)
+          .single();
+
+      final isNowBookmarked = existingBookmark == null;
+      return BlogModel.fromJson(blog).copyWith(
+        posterName: blog['profiles']['name'],
+        isBookmarked: isNowBookmarked,
+      );
+    } on PostgrestException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<BlogModel>> getBookmarkedBlogs({
+    required String userId,
+    int page = 0,
+    int limit = 10,
+  }) async {
+    try {
+      final start = page * limit;
+      final end = start + limit - 1;
+
+      // Get bookmarked blog IDs for this user
+      final bookmarks = await supabaseClient
+          .from('bookmarks')
+          .select('blog_id')
+          .eq('user_id', userId)
+          .order('created_at', ascending: false)
+          .range(start, end);
+
+      if (bookmarks.isEmpty) {
+        return [];
+      }
+
+      final blogIds = bookmarks.map((b) => b['blog_id'] as String).toList();
+
+      // Fetch the blogs
+      final blogs = await supabaseClient
+          .from('blogs')
+          .select('*, profiles (name)')
+          .inFilter('id', blogIds);
+
+      // Sort by bookmark order and mark as bookmarked
+      return blogIds
+          .map((id) {
+            final blogData = blogs.firstWhere(
+              (b) => b['id'] == id,
+              orElse: () => <String, dynamic>{},
+            );
+            if (blogData.isEmpty) return null;
+            return BlogModel.fromJson(blogData).copyWith(
+              posterName: blogData['profiles']['name'],
+              isBookmarked: true,
+            );
+          })
+          .whereType<BlogModel>()
           .toList();
     } on PostgrestException catch (e) {
       throw ServerException(e.message);

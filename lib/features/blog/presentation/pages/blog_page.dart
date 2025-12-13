@@ -1,12 +1,16 @@
 import 'dart:async';
 
+import 'package:blogify/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:blogify/core/common/widgets/loader.dart';
 import 'package:blogify/core/constants/constants.dart';
 import 'package:blogify/core/utils/show_snackbar.dart';
 import 'package:blogify/features/blog/domain/entities/blog.dart';
 import 'package:blogify/features/blog/presentation/bloc/blog_bloc.dart';
 import 'package:blogify/features/blog/presentation/pages/add_new_blog_page.dart';
+import 'package:blogify/features/blog/presentation/pages/bookmarks_page.dart';
 import 'package:blogify/features/blog/presentation/widgets/blog_card.dart';
+import 'package:blogify/features/notifications/presentation/bloc/notification_bloc.dart';
+import 'package:blogify/features/notifications/presentation/pages/notifications_page.dart';
 import 'package:blogify/features/profile/presentation/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,6 +39,7 @@ class _BlogPageState extends State<BlogPage>
   void initState() {
     super.initState();
     _fetchBlogs();
+    _fetchUnreadNotificationCount();
 
     // FAB Animation
     _fabController = AnimationController(
@@ -44,6 +49,15 @@ class _BlogPageState extends State<BlogPage>
 
     // Infinite scroll listener
     _scrollController.addListener(_onScroll);
+  }
+
+  void _fetchUnreadNotificationCount() {
+    final userState = context.read<AppUserCubit>().state;
+    if (userState is AppUserLoggedIn) {
+      context
+          .read<NotificationBloc>()
+          .add(NotificationFetchUnreadCount(userId: userState.user.id));
+    }
   }
 
   void _onScroll() {
@@ -216,12 +230,76 @@ class _BlogPageState extends State<BlogPage>
         ),
         IconButton(
           onPressed: () {
+            Navigator.push(context, BookmarksPage.route());
+          },
+          icon: const Icon(Icons.bookmark_border),
+          tooltip: 'Bookmarks',
+        ),
+        _buildNotificationIcon(),
+        IconButton(
+          onPressed: () {
             Navigator.push(context, ProfilePage.route());
           },
           icon: const Icon(Icons.person),
           tooltip: 'Profile',
         ),
       ],
+    );
+  }
+
+  Widget _buildNotificationIcon() {
+    return BlocBuilder<NotificationBloc, NotificationState>(
+      builder: (context, state) {
+        int unreadCount = 0;
+        if (state is NotificationUnreadCount) {
+          unreadCount = state.count;
+        } else if (state is NotificationLoaded) {
+          unreadCount = state.unreadCount;
+        }
+
+        return Stack(
+          children: [
+            IconButton(
+              onPressed: () async {
+                await Navigator.push(context, NotificationsPage.route());
+                // Refresh unread count when returning
+                _fetchUnreadNotificationCount();
+              },
+              icon: Icon(
+                unreadCount > 0
+                    ? Icons.notifications_active
+                    : Icons.notifications_outlined,
+              ),
+              tooltip: 'Notifications',
+            ),
+            if (unreadCount > 0)
+              Positioned(
+                right: 6,
+                top: 6,
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.error,
+                    shape: BoxShape.circle,
+                  ),
+                  constraints: const BoxConstraints(
+                    minWidth: 18,
+                    minHeight: 18,
+                  ),
+                  child: Text(
+                    unreadCount > 99 ? '99+' : unreadCount.toString(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 

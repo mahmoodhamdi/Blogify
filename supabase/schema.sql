@@ -13,11 +13,27 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- Drop triggers first (safe even if table doesn't exist)
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 
--- Drop functions
-DROP FUNCTION IF EXISTS public.handle_new_user();
-DROP FUNCTION IF EXISTS public.update_updated_at_column();
+-- Drop functions (CASCADE to drop dependent triggers)
+DROP FUNCTION IF EXISTS public.handle_new_user() CASCADE;
+DROP FUNCTION IF EXISTS public.update_updated_at_column() CASCADE;
 
--- Drop tables with CASCADE (automatically drops policies, triggers, indexes)
+-- Drop V4 objects (notifications)
+DROP TABLE IF EXISTS public.notifications CASCADE;
+DROP FUNCTION IF EXISTS public.create_like_notification() CASCADE;
+DROP FUNCTION IF EXISTS public.create_comment_notification() CASCADE;
+
+-- Drop V3 objects (comments)
+DROP TABLE IF EXISTS public.comments CASCADE;
+DROP FUNCTION IF EXISTS public.increment_comments_count() CASCADE;
+DROP FUNCTION IF EXISTS public.decrement_comments_count() CASCADE;
+
+-- Drop V2 objects (likes, bookmarks)
+DROP TABLE IF EXISTS public.likes CASCADE;
+DROP TABLE IF EXISTS public.bookmarks CASCADE;
+DROP FUNCTION IF EXISTS public.increment_likes_count() CASCADE;
+DROP FUNCTION IF EXISTS public.decrement_likes_count() CASCADE;
+
+-- Drop V1 tables with CASCADE (automatically drops policies, triggers, indexes)
 DROP TABLE IF EXISTS public.blogs CASCADE;
 DROP TABLE IF EXISTS public.profiles CASCADE;
 

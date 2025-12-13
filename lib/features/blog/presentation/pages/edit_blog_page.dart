@@ -9,9 +9,11 @@ import 'package:blogify/features/blog/domain/entities/blog.dart';
 import 'package:blogify/features/blog/presentation/bloc/blog_bloc.dart';
 import 'package:blogify/features/blog/presentation/pages/blog_page.dart';
 import 'package:blogify/features/blog/presentation/widgets/blog_editor.dart';
+import 'package:blogify/features/blog/presentation/widgets/rich_text_editor.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 
 class EditBlogPage extends StatefulWidget {
   static MaterialPageRoute<dynamic> route(Blog blog) => MaterialPageRoute(
@@ -28,7 +30,7 @@ class EditBlogPage extends StatefulWidget {
 
 class _EditBlogPageState extends State<EditBlogPage> {
   final titleController = TextEditingController();
-  final contentController = TextEditingController();
+  late QuillController contentController;
   final formKey = GlobalKey<FormState>();
   List<String> selectedTopics = [];
   File? newImage;
@@ -39,7 +41,7 @@ class _EditBlogPageState extends State<EditBlogPage> {
     super.initState();
     // Pre-fill the form with existing blog data
     titleController.text = widget.blog.title;
-    contentController.text = widget.blog.content;
+    contentController = RichTextHelper.createController(widget.blog.content);
     selectedTopics = List<String>.from(widget.blog.topics);
   }
 
@@ -54,16 +56,29 @@ class _EditBlogPageState extends State<EditBlogPage> {
   }
 
   void updateBlog() {
-    if (formKey.currentState!.validate() && selectedTopics.isNotEmpty) {
+    final contentText = contentController.document.toPlainText().trim();
+
+    if (formKey.currentState!.validate() &&
+        selectedTopics.isNotEmpty &&
+        contentText.isNotEmpty) {
+      // Convert rich text document to JSON for storage
+      final richContent = RichTextHelper.documentToJson(contentController.document);
+
       context.read<BlogBloc>().add(
             BlogUpdate(
               blogId: widget.blog.id,
               title: titleController.text.trim(),
-              content: contentController.text.trim(),
+              content: richContent,
               image: imageChanged ? newImage : null,
               topics: selectedTopics,
             ),
           );
+    } else if (contentText.isEmpty) {
+      showSnackBar(
+        content: 'Please add some content to your blog',
+        context: context,
+        type: SnackBarType.error,
+      );
     } else if (selectedTopics.isEmpty) {
       showSnackBar(
         content: 'Please select at least one topic',
@@ -122,6 +137,7 @@ class _EditBlogPageState extends State<EditBlogPage> {
             child: Form(
               key: formKey,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 16),
                   // Image Section
@@ -195,12 +211,20 @@ class _EditBlogPageState extends State<EditBlogPage> {
                     controller: titleController,
                     hintText: 'Blog title',
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 16),
 
-                  // Content Editor
-                  BlogEditor(
+                  // Content Editor (Rich Text)
+                  Text(
+                    'Content',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w500,
+                        ),
+                  ),
+                  const SizedBox(height: 8),
+                  RichTextEditor(
                     controller: contentController,
-                    hintText: 'Blog content',
+                    hintText: 'Write your blog content here...',
+                    minHeight: 300,
                   ),
                   const SizedBox(height: 20),
 

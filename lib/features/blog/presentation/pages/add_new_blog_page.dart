@@ -10,9 +10,11 @@ import 'package:blogify/core/utils/show_snackbar.dart';
 import 'package:blogify/features/blog/presentation/bloc/blog_bloc.dart';
 import 'package:blogify/features/blog/presentation/pages/blog_page.dart';
 import 'package:blogify/features/blog/presentation/widgets/blog_editor.dart';
+import 'package:blogify/features/blog/presentation/widgets/rich_text_editor.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 
 class AddNewBlogPage extends StatefulWidget {
   static MaterialPageRoute<dynamic> route() => MaterialPageRoute(
@@ -26,10 +28,16 @@ class AddNewBlogPage extends StatefulWidget {
 
 class _AddNewBlogPageState extends State<AddNewBlogPage> {
   final titleController = TextEditingController();
-  final contentController = TextEditingController();
+  late QuillController contentController;
   final formKey = GlobalKey<FormState>();
   List<String> selectedTopics = [];
   File? image;
+
+  @override
+  void initState() {
+    super.initState();
+    contentController = QuillController.basic();
+  }
 
   void selectImage() async {
     final pickedImage = await pickImage();
@@ -41,20 +49,45 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
   }
 
   void uploadBlog() {
+    final contentText = contentController.document.toPlainText().trim();
+
     if (formKey.currentState!.validate() &&
         selectedTopics.isNotEmpty &&
-        image != null) {
+        image != null &&
+        contentText.isNotEmpty) {
       final posterId =
           (context.read<AppUserCubit>().state as AppUserLoggedIn).user.id;
+
+      // Convert rich text document to JSON for storage
+      final richContent = RichTextHelper.documentToJson(contentController.document);
+
       context.read<BlogBloc>().add(
             BlogUpload(
               posterId: posterId,
               title: titleController.text.trim(),
-              content: contentController.text.trim(),
+              content: richContent,
               image: image!,
               topics: selectedTopics,
             ),
           );
+    } else if (contentText.isEmpty) {
+      showSnackBar(
+        content: 'Please add some content to your blog',
+        context: context,
+        type: SnackBarType.error,
+      );
+    } else if (selectedTopics.isEmpty) {
+      showSnackBar(
+        content: 'Please select at least one topic',
+        context: context,
+        type: SnackBarType.error,
+      );
+    } else if (image == null) {
+      showSnackBar(
+        content: 'Please select a cover image',
+        context: context,
+        type: SnackBarType.error,
+      );
     }
   }
 
@@ -68,13 +101,16 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          title: const Text('Create Blog'),
+        ),
         body: SingleChildScrollView(
           padding: EdgeInsets.symmetric(
               horizontal: MediaQuery.of(context).size.width * 0.05),
           child: Form(
             key: formKey,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 image != null
                     ? GestureDetector(
@@ -149,10 +185,18 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
                   controller: titleController,
                   hintText: 'Blog title',
                 ),
-                const SizedBox(height: 10),
-                BlogEditor(
+                const SizedBox(height: 16),
+                Text(
+                  'Content',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                ),
+                const SizedBox(height: 8),
+                RichTextEditor(
                   controller: contentController,
-                  hintText: 'Blog content',
+                  hintText: 'Write your blog content here...',
+                  minHeight: 300,
                 ),
                 const SizedBox(height: 20),
                 BlocConsumer<BlogBloc, BlogState>(listener: (context, state) {
@@ -176,7 +220,8 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
 
                   return GradientButton(
                       buttonText: 'Upload Blog', onPressed: uploadBlog);
-                })
+                }),
+                const SizedBox(height: 20),
               ],
             ),
           ),

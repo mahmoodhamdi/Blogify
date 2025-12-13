@@ -34,4 +34,30 @@ abstract interface class BlogRepository {
     int page = 0,
     int limit = 10,
   });
+
+  Future<Either<Failure, Blog>> toggleLike({
+    required String blogId,
+    required String userId,
+  });
+
+  Future<Either<Failure, Blog>> toggleBookmark({
+    required String blogId,
+    required String userId,
+  });
+
+  Future<Either<Failure, List<Blog>>> getBookmarkedBlogs({
+    required String userId,
+    int page = 0,
+    int limit = 10,
+  });
+
+  Future<Either<Failure, bool>> isLiked({
+    required String blogId,
+    required String userId,
+  });
+
+  Future<Either<Failure, bool>> isBookmarked({
+    required String blogId,
+    required String userId,
+  });
 }

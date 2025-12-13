@@ -10,6 +10,10 @@ class BlogModel extends Blog {
     required super.topics,
     required super.updatedAt,
     super.posterName,
+    super.likesCount,
+    super.commentsCount,
+    super.isLiked,
+    super.isBookmarked,
   });
 
   Map<String, dynamic> toJson() {
@@ -51,9 +55,12 @@ class BlogModel extends Blog {
       updatedAt: map['updated_at'] == null
           ? DateTime.now()
           : DateTime.parse(map['updated_at']),
+      likesCount: map['likes_count'] as int? ?? 0,
+      commentsCount: map['comments_count'] as int? ?? 0,
     );
   }
 
+  @override
   BlogModel copyWith({
     String? id,
     String? posterId,
@@ -63,6 +70,10 @@ class BlogModel extends Blog {
     List<String>? topics,
     DateTime? updatedAt,
     String? posterName,
+    int? likesCount,
+    int? commentsCount,
+    bool? isLiked,
+    bool? isBookmarked,
   }) {
     return BlogModel(
       id: id ?? this.id,
@@ -73,6 +84,10 @@ class BlogModel extends Blog {
       topics: topics ?? this.topics,
       updatedAt: updatedAt ?? this.updatedAt,
       posterName: posterName ?? this.posterName,
+      likesCount: likesCount ?? this.likesCount,
+      commentsCount: commentsCount ?? this.commentsCount,
+      isLiked: isLiked ?? this.isLiked,
+      isBookmarked: isBookmarked ?? this.isBookmarked,
     );
   }
 }

@@ -148,4 +148,101 @@ class BlogRepositoryImpl implements BlogRepository {
       return left(ServerFailure(message: e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, Blog>> toggleLike({
+    required String blogId,
+    required String userId,
+  }) async {
+    try {
+      if (!await (connectionChecker.isConnected)) {
+        return left(const NetworkFailure());
+      }
+      final blog = await blogRemoteDataSource.toggleLike(
+        blogId: blogId,
+        userId: userId,
+      );
+      return right(blog);
+    } on ServerException catch (e) {
+      return left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Blog>> toggleBookmark({
+    required String blogId,
+    required String userId,
+  }) async {
+    try {
+      if (!await (connectionChecker.isConnected)) {
+        return left(const NetworkFailure());
+      }
+      final blog = await blogRemoteDataSource.toggleBookmark(
+        blogId: blogId,
+        userId: userId,
+      );
+      return right(blog);
+    } on ServerException catch (e) {
+      return left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Blog>>> getBookmarkedBlogs({
+    required String userId,
+    int page = 0,
+    int limit = 10,
+  }) async {
+    try {
+      if (!await (connectionChecker.isConnected)) {
+        return left(const NetworkFailure());
+      }
+      final blogs = await blogRemoteDataSource.getBookmarkedBlogs(
+        userId: userId,
+        page: page,
+        limit: limit,
+      );
+      return right(blogs);
+    } on ServerException catch (e) {
+      return left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> isLiked({
+    required String blogId,
+    required String userId,
+  }) async {
+    try {
+      if (!await (connectionChecker.isConnected)) {
+        return left(const NetworkFailure());
+      }
+      final result = await blogRemoteDataSource.isLiked(
+        blogId: blogId,
+        userId: userId,
+      );
+      return right(result);
+    } on ServerException catch (e) {
+      return left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> isBookmarked({
+    required String blogId,
+    required String userId,
+  }) async {
+    try {
+      if (!await (connectionChecker.isConnected)) {
+        return left(const NetworkFailure());
+      }
+      final result = await blogRemoteDataSource.isBookmarked(
+        blogId: blogId,
+        userId: userId,
+      );
+      return right(result);
+    } on ServerException catch (e) {
+      return left(ServerFailure(message: e.message));
+    }
+  }
 }

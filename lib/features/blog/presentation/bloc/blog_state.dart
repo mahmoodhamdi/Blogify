@@ -97,3 +97,46 @@ final class BlogSearchSuccess extends BlogState {
   @override
   List<Object?> get props => [blogs, query, topics, hasReachedMax, currentPage];
 }
+
+final class BlogLikeToggled extends BlogState {
+  final Blog blog;
+  const BlogLikeToggled(this.blog);
+
+  @override
+  List<Object?> get props => [blog];
+}
+
+final class BlogBookmarkToggled extends BlogState {
+  final Blog blog;
+  const BlogBookmarkToggled(this.blog);
+
+  @override
+  List<Object?> get props => [blog];
+}
+
+final class BlogBookmarksDisplaySuccess extends BlogState {
+  final List<Blog> blogs;
+  final bool hasReachedMax;
+  final int currentPage;
+
+  const BlogBookmarksDisplaySuccess(
+    this.blogs, {
+    this.hasReachedMax = false,
+    this.currentPage = 0,
+  });
+
+  BlogBookmarksDisplaySuccess copyWith({
+    List<Blog>? blogs,
+    bool? hasReachedMax,
+    int? currentPage,
+  }) {
+    return BlogBookmarksDisplaySuccess(
+      blogs ?? this.blogs,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+      currentPage: currentPage ?? this.currentPage,
+    );
+  }
+
+  @override
+  List<Object?> get props => [blogs, hasReachedMax, currentPage];
+}

@@ -4,6 +4,7 @@ import 'package:blogify/core/common/cubits/theme/theme_state.dart';
 import 'package:blogify/core/theme/theme.dart';
 import 'package:blogify/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blogify/features/blog/presentation/bloc/blog_bloc.dart';
+import 'package:blogify/features/notifications/presentation/bloc/notification_bloc.dart';
 import 'package:blogify/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:blogify/init_dependencies.dart';
 import 'package:blogify/splash.dart';
@@ -42,6 +43,9 @@ void main() async {
       ),
       BlocProvider(
         create: (_) => serviceLocator<ProfileBloc>(),
+      ),
+      BlocProvider(
+        create: (_) => serviceLocator<NotificationBloc>(),
       ),
     ],
     child: const Blogify(),

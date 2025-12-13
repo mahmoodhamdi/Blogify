@@ -61,3 +61,35 @@ final class BlogSearch extends BlogEvent {
 final class BlogSearchMoreResults extends BlogEvent {}
 
 final class BlogClearSearch extends BlogEvent {}
+
+final class BlogToggleLike extends BlogEvent {
+  final String blogId;
+  final String userId;
+
+  BlogToggleLike({
+    required this.blogId,
+    required this.userId,
+  });
+}
+
+final class BlogToggleBookmark extends BlogEvent {
+  final String blogId;
+  final String userId;
+
+  BlogToggleBookmark({
+    required this.blogId,
+    required this.userId,
+  });
+}
+
+final class BlogFetchBookmarks extends BlogEvent {
+  final String userId;
+
+  BlogFetchBookmarks({required this.userId});
+}
+
+final class BlogFetchMoreBookmarks extends BlogEvent {
+  final String userId;
+
+  BlogFetchMoreBookmarks({required this.userId});
+}
