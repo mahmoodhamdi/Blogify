@@ -19,7 +19,12 @@ final class BlogUpload extends BlogEvent {
   });
 }
 
-final class BlogFetchAllBlogs extends BlogEvent {}
+final class BlogFetchAllBlogs extends BlogEvent {
+  final bool refresh;
+  BlogFetchAllBlogs({this.refresh = false});
+}
+
+final class BlogFetchMoreBlogs extends BlogEvent {}
 
 final class BlogDelete extends BlogEvent {
   final String blogId;

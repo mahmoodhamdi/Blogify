@@ -21,6 +21,7 @@ class BlogPage extends StatefulWidget {
 class _BlogPageState extends State<BlogPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _fabController;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -32,6 +33,22 @@ class _BlogPageState extends State<BlogPage>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     )..forward();
+
+    // Infinite scroll listener
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_isBottom) {
+      context.read<BlogBloc>().add(BlogFetchMoreBlogs());
+    }
+  }
+
+  bool get _isBottom {
+    if (!_scrollController.hasClients) return false;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.offset;
+    return currentScroll >= (maxScroll * 0.9); // Load more when 90% scrolled
   }
 
   void _fetchBlogs() {
@@ -39,7 +56,7 @@ class _BlogPageState extends State<BlogPage>
   }
 
   Future<void> _onRefresh() async {
-    _fetchBlogs();
+    context.read<BlogBloc>().add(BlogFetchAllBlogs(refresh: true));
     // Wait for the state to change
     await context.read<BlogBloc>().stream.firstWhere(
           (state) => state is BlogsDisplaySuccess || state is BlogFailure,
@@ -49,6 +66,7 @@ class _BlogPageState extends State<BlogPage>
   @override
   void dispose() {
     _fabController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -150,9 +168,22 @@ class _BlogPageState extends State<BlogPage>
             return RefreshIndicator(
               onRefresh: _onRefresh,
               child: ListView.builder(
+                controller: _scrollController,
                 physics: const AlwaysScrollableScrollPhysics(),
-                itemCount: state.blogs.length,
+                itemCount: state.hasReachedMax
+                    ? state.blogs.length
+                    : state.blogs.length + 1,
                 itemBuilder: (context, index) {
+                  // Show loading indicator at the bottom
+                  if (index >= state.blogs.length) {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+
                   final blog = state.blogs[index];
 
                   return AnimatedBuilder(

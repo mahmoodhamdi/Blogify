@@ -30,10 +30,29 @@ final class BlogUploadSuccess extends BlogState {
 
 final class BlogsDisplaySuccess extends BlogState {
   final List<Blog> blogs;
-  const BlogsDisplaySuccess(this.blogs);
+  final bool hasReachedMax;
+  final int currentPage;
+
+  const BlogsDisplaySuccess(
+    this.blogs, {
+    this.hasReachedMax = false,
+    this.currentPage = 0,
+  });
+
+  BlogsDisplaySuccess copyWith({
+    List<Blog>? blogs,
+    bool? hasReachedMax,
+    int? currentPage,
+  }) {
+    return BlogsDisplaySuccess(
+      blogs ?? this.blogs,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+      currentPage: currentPage ?? this.currentPage,
+    );
+  }
 
   @override
-  List<Object?> get props => [blogs];
+  List<Object?> get props => [blogs, hasReachedMax, currentPage];
 }
 
 final class BlogDeleteSuccess extends BlogState {

@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:blogify/core/usecase/usecase.dart';
 import 'package:blogify/features/blog/domain/entities/blog.dart';
 import 'package:blogify/features/blog/domain/usecases/delete_blog.dart';
 import 'package:blogify/features/blog/domain/usecases/get_all_blogs.dart';
@@ -27,12 +26,14 @@ class BlogBloc extends Bloc<BlogEvent, BlogState> {
         _deleteBlog = deleteBlog,
         _updateBlog = updateBlog,
         super(const BlogInitial()) {
-    on<BlogEvent>((event, emit) => emit(const BlogLoading()));
     on<BlogUpload>(_onBlogUpload);
     on<BlogFetchAllBlogs>(_onFetchAllBlogs);
+    on<BlogFetchMoreBlogs>(_onFetchMoreBlogs);
     on<BlogDelete>(_onBlogDelete);
     on<BlogUpdate>(_onBlogUpdate);
   }
+
+  static const int _blogsPerPage = 10;
 
   void _onBlogUpload(
     BlogUpload event,
@@ -58,12 +59,49 @@ class BlogBloc extends Bloc<BlogEvent, BlogState> {
     BlogFetchAllBlogs event,
     Emitter<BlogState> emit,
   ) async {
-    final res = await _getAllBlogs(NoParams());
+    emit(const BlogLoading());
+
+    final res = await _getAllBlogs(
+      const GetAllBlogsParams(page: 0, limit: _blogsPerPage),
+    );
 
     res.fold(
       (l) => emit(BlogFailure(l.message)),
-      (r) => emit(BlogsDisplaySuccess(r)),
+      (blogs) => emit(BlogsDisplaySuccess(
+        blogs,
+        hasReachedMax: blogs.length < _blogsPerPage,
+        currentPage: 0,
+      )),
     );
+  }
+
+  void _onFetchMoreBlogs(
+    BlogFetchMoreBlogs event,
+    Emitter<BlogState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is BlogsDisplaySuccess && !currentState.hasReachedMax) {
+      final nextPage = currentState.currentPage + 1;
+
+      final res = await _getAllBlogs(
+        GetAllBlogsParams(page: nextPage, limit: _blogsPerPage),
+      );
+
+      res.fold(
+        (l) => emit(BlogFailure(l.message)),
+        (newBlogs) {
+          if (newBlogs.isEmpty) {
+            emit(currentState.copyWith(hasReachedMax: true));
+          } else {
+            emit(BlogsDisplaySuccess(
+              [...currentState.blogs, ...newBlogs],
+              hasReachedMax: newBlogs.length < _blogsPerPage,
+              currentPage: nextPage,
+            ));
+          }
+        },
+      );
+    }
   }
 
   void _onBlogDelete(
