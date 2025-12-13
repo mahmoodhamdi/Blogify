@@ -1,10 +1,9 @@
 import 'package:blogify/core/common/widgets/loader.dart';
 import 'package:blogify/core/utils/show_snackbar.dart';
-import 'package:blogify/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:blogify/features/auth/presentation/pages/login_page.dart';
 import 'package:blogify/features/blog/presentation/bloc/blog_bloc.dart';
 import 'package:blogify/features/blog/presentation/pages/add_new_blog_page.dart';
 import 'package:blogify/features/blog/presentation/widgets/blog_card.dart';
+import 'package:blogify/features/profile/presentation/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -70,48 +69,9 @@ class _BlogPageState extends State<BlogPage>
     super.dispose();
   }
 
-  void _showLogoutDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              context.read<AuthBloc>().add(AuthLogoutRequested());
-            },
-            child: const Text('Logout'),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state is AuthLogoutSuccess) {
-          Navigator.pushAndRemoveUntil(
-            context,
-            LoginPage.route(),
-            (route) => false,
-          );
-        } else if (state is AuthFailure) {
-          showSnackBar(
-            content: state.message,
-            context: context,
-            type: SnackBarType.error,
-          );
-        }
-      },
-      child: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: const Text('Blogify'),
           actions: [
@@ -125,12 +85,15 @@ class _BlogPageState extends State<BlogPage>
                   Navigator.push(context, AddNewBlogPage.route());
                 },
                 icon: const Icon(Icons.add),
+                tooltip: 'New Blog',
               ),
             ),
             IconButton(
-              onPressed: _showLogoutDialog,
-              icon: const Icon(Icons.logout),
-              tooltip: 'Logout',
+              onPressed: () {
+                Navigator.push(context, ProfilePage.route());
+              },
+              icon: const Icon(Icons.person),
+              tooltip: 'Profile',
             ),
           ],
         ),
@@ -225,7 +188,6 @@ class _BlogPageState extends State<BlogPage>
             ),
           );
         },
-      ),
       ),
     );
   }

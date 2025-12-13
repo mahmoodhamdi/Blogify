@@ -17,11 +17,14 @@ flutter run -d <device_id>
 # Analyze code for issues
 flutter analyze
 
-# Run tests
+# Run all tests
 flutter test
 
 # Run a single test file
-flutter test test/widget_test.dart
+flutter test test/core/validators/validation_test.dart
+
+# Run tests with coverage
+flutter test --coverage
 
 # Build APK
 flutter build apk
@@ -29,6 +32,16 @@ flutter build apk
 # Build iOS
 flutter build ios
 ```
+
+## Environment Setup
+
+1. Copy `.env.example` to `.env`
+2. Add Supabase credentials:
+   ```env
+   SUPABASE_URL=your_supabase_url_here
+   SUPABASE_ANON_KEY=your_supabase_anon_key_here
+   ```
+3. Credentials are loaded via `flutter_dotenv` in `AppSecrets`
 
 ## Architecture Overview
 
@@ -56,26 +69,28 @@ features/<feature_name>/
 
 ### Core Module (`lib/core/`)
 
-- **common/cubits/**: App-wide state (e.g., `AppUserCubit` for user session)
+- **common/cubits/**: App-wide state (`AppUserCubit` for user session)
 - **common/entities/**: Shared entities across features
 - **common/widgets/**: Reusable widgets (`GradientButton`, `Loader`, `ChoiceChipWidget`)
+- **constants/**: App constants including blog `topics` list
 - **error/**: `Failure` and `ServerException` classes for error handling
 - **network/**: `ConnectionChecker` for internet connectivity
-- **secrets/**: `AppSecrets` - Supabase credentials (URL and anon key)
+- **secrets/**: `AppSecrets` - loads Supabase credentials from `.env`
 - **theme/**: `AppPallete` for colors, `AppTheme` for light/dark themes
-- **usecase/**: Base `UseCase<SuccessType, Params>` interface using `Either<Failure, SuccessType>` from dartz
+- **usecase/**: Base `UseCase<SuccessType, Params>` interface using `Either<Failure, SuccessType>`
 - **utils/**: Utilities (`showSnackbar`, `pickImage`, `formatDate`, `calculateReadingTime`)
 - **validators/**: Input validation logic
 
 ### Dependency Injection
 
-Uses **GetIt** (`serviceLocator`) initialized in `init_dependencies.dart`:
+Uses **GetIt** (`serviceLocator`) initialized in `init_dependencies.dart` with part file `init_dependencies.main.dart`:
 - `_initAuth()`: Registers auth data sources, repository, usecases, and `AuthBloc`
 - `_initBlog()`: Registers blog data sources, repository, usecases, and `BlogBloc`
+- `_initProfile()`: Registers profile data sources, repository, usecases, and `ProfileBloc`
 
 ### State Management
 
-- **BLoC** for feature-specific state (`AuthBloc`, `BlogBloc`)
+- **BLoC** for feature-specific state (`AuthBloc`, `BlogBloc`, `ProfileBloc`)
 - **Cubit** for app-wide state (`AppUserCubit`)
 - All provided via `MultiBlocProvider` in `main.dart`
 
@@ -89,22 +104,33 @@ Uses **GetIt** (`serviceLocator`) initialized in `init_dependencies.dart`:
 6. Result flows back as `Either<Failure, SuccessType>`
 7. BLoC emits new **State**
 
-## Supabase Configuration
+## Testing
 
-Credentials are stored in `lib/core/secrets/app_secrets.dart`:
-- `AppSecrets.supabaseUrl`
-- `AppSecrets.supabaseAnonKey`
+Tests use **mocktail** for mocking. Structure mirrors `lib/`:
+
+```
+test/
+├── core/
+│   ├── utils/              # Unit tests for utilities
+│   └── validators/         # Validation tests
+└── features/
+    ├── auth/domain/usecases/
+    └── blog/domain/usecases/
+```
+
+## Supabase Configuration
 
 Database tables: `profiles`, `blogs`
 Storage bucket: `blog_images`
 
-## Key Dependencies
+Key RLS policies ensure users can only modify their own content.
 
-- **flutter_bloc**: State management
-- **get_it**: Dependency injection
-- **supabase_flutter**: Backend services
-- **dartz**: Functional programming (`Either` type for error handling)
-- **image_picker**: Blog cover image selection
-- **cached_network_image**: Image caching
-- **internet_connection_checker_plus**: Network status
-- **hive**: Local storage
+## Commit Convention
+
+Follow [Conventional Commits](https://www.conventionalcommits.org/):
+- `feat:` - New features
+- `fix:` - Bug fixes
+- `docs:` - Documentation changes
+- `test:` - Adding/updating tests
+- `refactor:` - Code refactoring
+- `chore:` - Maintenance tasks

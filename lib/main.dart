@@ -2,6 +2,7 @@ import 'package:blogify/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:blogify/core/theme/theme.dart';
 import 'package:blogify/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blogify/features/blog/presentation/bloc/blog_bloc.dart';
+import 'package:blogify/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:blogify/init_dependencies.dart';
 import 'package:blogify/splash.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,9 @@ void main() async {
       ),
       BlocProvider(
         create: (_) => serviceLocator<BlogBloc>(),
+      ),
+      BlocProvider(
+        create: (_) => serviceLocator<ProfileBloc>(),
       ),
     ],
     child: const Blogify(),

@@ -5,6 +5,7 @@ final serviceLocator = GetIt.instance;
 Future<void> initDependencies() async {
   _initAuth();
   _initBlog();
+  _initProfile();
 
   final supabase = await Supabase.initialize(
     url: AppSecrets.supabaseUrl,
@@ -119,6 +120,35 @@ void _initBlog() {
         getAllBlogs: serviceLocator(),
         deleteBlog: serviceLocator(),
         updateBlog: serviceLocator(),
+      ),
+    );
+}
+
+void _initProfile() {
+  // Datasource
+  serviceLocator
+    ..registerFactory<ProfileRemoteDataSource>(
+      () => ProfileRemoteDataSourceImpl(
+        serviceLocator(),
+      ),
+    )
+    // Repository
+    ..registerFactory<ProfileRepository>(
+      () => ProfileRepositoryImpl(
+        serviceLocator(),
+        serviceLocator(),
+      ),
+    )
+    // Usecases
+    ..registerFactory(
+      () => GetUserBlogs(
+        serviceLocator(),
+      ),
+    )
+    // Bloc
+    ..registerLazySingleton(
+      () => ProfileBloc(
+        getUserBlogs: serviceLocator(),
       ),
     );
 }
