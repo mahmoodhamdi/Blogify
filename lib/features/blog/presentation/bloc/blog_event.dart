@@ -26,3 +26,19 @@ final class BlogDelete extends BlogEvent {
 
   BlogDelete({required this.blogId});
 }
+
+final class BlogUpdate extends BlogEvent {
+  final String blogId;
+  final String title;
+  final String content;
+  final File? image;
+  final List<String> topics;
+
+  BlogUpdate({
+    required this.blogId,
+    required this.title,
+    required this.content,
+    this.image,
+    required this.topics,
+  });
+}

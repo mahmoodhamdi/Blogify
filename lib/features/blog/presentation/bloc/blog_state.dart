@@ -39,3 +39,7 @@ final class BlogsDisplaySuccess extends BlogState {
 final class BlogDeleteSuccess extends BlogState {
   const BlogDeleteSuccess();
 }
+
+final class BlogUpdateSuccess extends BlogState {
+  const BlogUpdateSuccess();
+}

@@ -7,6 +7,7 @@ import 'package:blogify/core/utils/show_snackbar.dart';
 import 'package:blogify/features/blog/domain/entities/blog.dart';
 import 'package:blogify/features/blog/presentation/bloc/blog_bloc.dart';
 import 'package:blogify/features/blog/presentation/pages/blog_page.dart';
+import 'package:blogify/features/blog/presentation/pages/edit_blog_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -147,6 +148,16 @@ Read more on Blogify!
               pinned: true,
               actions: isOwner
                   ? [
+                      IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            EditBlogPage.route(widget.blog),
+                          );
+                        },
+                        icon: const Icon(Icons.edit_outlined),
+                        tooltip: 'Edit Blog',
+                      ),
                       IconButton(
                         onPressed: _showDeleteDialog,
                         icon: const Icon(Icons.delete_outline),

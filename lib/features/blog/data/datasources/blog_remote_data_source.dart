@@ -12,6 +12,11 @@ abstract interface class BlogRemoteDataSource {
   });
   Future<List<BlogModel>> getAllBlogs();
   Future<void> deleteBlog(String blogId);
+  Future<BlogModel> updateBlog(BlogModel blog);
+  Future<String> updateBlogImage({
+    required File image,
+    required String blogId,
+  });
 }
 
 class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
@@ -83,6 +88,46 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
     } on StorageException catch (e) {
       throw ServerException(e.message);
     } on PostgrestException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<BlogModel> updateBlog(BlogModel blog) async {
+    try {
+      final blogData = await supabaseClient
+          .from('blogs')
+          .update(blog.toUpdateJson(includeImageUrl: blog.imageUrl.isNotEmpty))
+          .eq('id', blog.id)
+          .select();
+
+      return BlogModel.fromJson(blogData.first);
+    } on PostgrestException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<String> updateBlogImage({
+    required File image,
+    required String blogId,
+  }) async {
+    try {
+      // Update (overwrite) the existing image
+      await supabaseClient.storage.from('blog_images').update(
+            blogId,
+            image,
+            fileOptions: const FileOptions(upsert: true),
+          );
+
+      // Return the public URL (add timestamp to bust cache)
+      final url = supabaseClient.storage.from('blog_images').getPublicUrl(blogId);
+      return '$url?t=${DateTime.now().millisecondsSinceEpoch}';
+    } on StorageException catch (e) {
       throw ServerException(e.message);
     } catch (e) {
       throw ServerException(e.toString());

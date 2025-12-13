@@ -78,4 +78,46 @@ class BlogRepositoryImpl implements BlogRepository {
       return left(Failure(e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, Blog>> updateBlog({
+    required String blogId,
+    required String title,
+    required String content,
+    required List<String> topics,
+    File? image,
+  }) async {
+    try {
+      if (!await (connectionChecker.isConnected)) {
+        return left(Failure(Constants.noConnectionErrorMessage));
+      }
+
+      String imageUrl = '';
+
+      // If a new image is provided, update it
+      if (image != null) {
+        imageUrl = await blogRemoteDataSource.updateBlogImage(
+          image: image,
+          blogId: blogId,
+        );
+      }
+
+      // Create the blog model with updated fields
+      final blogModel = BlogModel(
+        id: blogId,
+        posterId: '', // Will not be updated (excluded in toUpdateJson)
+        title: title,
+        content: content,
+        imageUrl: imageUrl, // Empty string = don't update image
+        topics: topics,
+        updatedAt: DateTime.now(),
+      );
+
+      final updatedBlog = await blogRemoteDataSource.updateBlog(blogModel);
+
+      return right(updatedBlog);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
 }

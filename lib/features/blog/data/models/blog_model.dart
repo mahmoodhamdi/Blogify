@@ -24,6 +24,22 @@ class BlogModel extends Blog {
     };
   }
 
+  /// Returns a map for update operations.
+  /// Only includes fields that should be updated (excludes id and poster_id).
+  /// If [includeImageUrl] is false, image_url will not be included.
+  Map<String, dynamic> toUpdateJson({bool includeImageUrl = true}) {
+    final map = <String, dynamic>{
+      'title': title,
+      'content': content,
+      'topics': topics,
+      'updated_at': updatedAt.toIso8601String(),
+    };
+    if (includeImageUrl && imageUrl.isNotEmpty) {
+      map['image_url'] = imageUrl;
+    }
+    return map;
+  }
+
   factory BlogModel.fromJson(Map<String, dynamic> map) {
     return BlogModel(
       id: map['id'] as String,
