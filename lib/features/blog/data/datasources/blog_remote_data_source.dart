@@ -17,6 +17,12 @@ abstract interface class BlogRemoteDataSource {
     required File image,
     required String blogId,
   });
+  Future<List<BlogModel>> searchBlogs({
+    required String query,
+    List<String>? topics,
+    int page = 0,
+    int limit = 10,
+  });
 }
 
 class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
@@ -135,6 +141,49 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
       final url = supabaseClient.storage.from('blog_images').getPublicUrl(blogId);
       return '$url?t=${DateTime.now().millisecondsSinceEpoch}';
     } on StorageException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<BlogModel>> searchBlogs({
+    required String query,
+    List<String>? topics,
+    int page = 0,
+    int limit = 10,
+  }) async {
+    try {
+      final start = page * limit;
+      final end = start + limit - 1;
+
+      var queryBuilder = supabaseClient
+          .from('blogs')
+          .select('*, profiles (name)');
+
+      // Search in title and content using ilike for case-insensitive search
+      if (query.isNotEmpty) {
+        queryBuilder = queryBuilder.or('title.ilike.%$query%,content.ilike.%$query%');
+      }
+
+      // Filter by topics if provided
+      if (topics != null && topics.isNotEmpty) {
+        queryBuilder = queryBuilder.overlaps('topics', topics);
+      }
+
+      final blogs = await queryBuilder
+          .order('updated_at', ascending: false)
+          .range(start, end);
+
+      return blogs
+          .map(
+            (blog) => BlogModel.fromJson(blog).copyWith(
+              posterName: blog['profiles']['name'],
+            ),
+          )
+          .toList();
+    } on PostgrestException catch (e) {
       throw ServerException(e.message);
     } catch (e) {
       throw ServerException(e.toString());

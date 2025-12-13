@@ -126,4 +126,27 @@ class BlogRepositoryImpl implements BlogRepository {
       return left(Failure(e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, List<Blog>>> searchBlogs({
+    required String query,
+    List<String>? topics,
+    int page = 0,
+    int limit = 10,
+  }) async {
+    try {
+      if (!await (connectionChecker.isConnected)) {
+        return left(Failure(Constants.noConnectionErrorMessage));
+      }
+      final blogs = await blogRemoteDataSource.searchBlogs(
+        query: query,
+        topics: topics,
+        page: page,
+        limit: limit,
+      );
+      return right(blogs);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
 }

@@ -62,3 +62,38 @@ final class BlogDeleteSuccess extends BlogState {
 final class BlogUpdateSuccess extends BlogState {
   const BlogUpdateSuccess();
 }
+
+final class BlogSearchSuccess extends BlogState {
+  final List<Blog> blogs;
+  final String query;
+  final List<String>? topics;
+  final bool hasReachedMax;
+  final int currentPage;
+
+  const BlogSearchSuccess({
+    required this.blogs,
+    required this.query,
+    this.topics,
+    this.hasReachedMax = false,
+    this.currentPage = 0,
+  });
+
+  BlogSearchSuccess copyWith({
+    List<Blog>? blogs,
+    String? query,
+    List<String>? topics,
+    bool? hasReachedMax,
+    int? currentPage,
+  }) {
+    return BlogSearchSuccess(
+      blogs: blogs ?? this.blogs,
+      query: query ?? this.query,
+      topics: topics ?? this.topics,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+      currentPage: currentPage ?? this.currentPage,
+    );
+  }
+
+  @override
+  List<Object?> get props => [blogs, query, topics, hasReachedMax, currentPage];
+}

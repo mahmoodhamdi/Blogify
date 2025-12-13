@@ -27,4 +27,11 @@ abstract interface class BlogRepository {
     required List<String> topics,
     File? image,
   });
+
+  Future<Either<Failure, List<Blog>>> searchBlogs({
+    required String query,
+    List<String>? topics,
+    int page = 0,
+    int limit = 10,
+  });
 }

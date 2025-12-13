@@ -47,3 +47,17 @@ final class BlogUpdate extends BlogEvent {
     required this.topics,
   });
 }
+
+final class BlogSearch extends BlogEvent {
+  final String query;
+  final List<String>? topics;
+
+  BlogSearch({
+    required this.query,
+    this.topics,
+  });
+}
+
+final class BlogSearchMoreResults extends BlogEvent {}
+
+final class BlogClearSearch extends BlogEvent {}

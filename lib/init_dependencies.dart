@@ -14,6 +14,7 @@ import 'package:blogify/features/blog/data/repositories/blog_repository_impl.dar
 import 'package:blogify/features/blog/domain/repositories/blog_repository.dart';
 import 'package:blogify/features/blog/domain/usecases/delete_blog.dart';
 import 'package:blogify/features/blog/domain/usecases/get_all_blogs.dart';
+import 'package:blogify/features/blog/domain/usecases/search_blogs.dart';
 import 'package:blogify/features/blog/domain/usecases/update_blog.dart';
 import 'package:blogify/features/blog/domain/usecases/upload_blog.dart';
 import 'package:blogify/features/blog/presentation/bloc/blog_bloc.dart';
