@@ -1,5 +1,6 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class AppSecrets {
-  static const supabaseUrl = 'https://cykqzxryzxsavgzdvzdd.supabase.co';
-  static const supabaseAnonKey =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5a3F6eHJ5enhzYXZnemR2emRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM2MzE2MzQsImV4cCI6MjAzOTIwNzYzNH0.-U1eGQbbzxPNWnbBRiKGWp6aikNu7MlOlwCAJRrylH8';
+  static String get supabaseUrl => dotenv.env['SUPABASE_URL'] ?? '';
+  static String get supabaseAnonKey => dotenv.env['SUPABASE_ANON_KEY'] ?? '';
 }

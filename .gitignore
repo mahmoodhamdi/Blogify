@@ -41,3 +41,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Secrets (should use .env instead)
+lib/core/secrets/app_secrets.dart
