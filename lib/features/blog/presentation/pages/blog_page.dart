@@ -1,5 +1,7 @@
 import 'package:blogify/core/common/widgets/loader.dart';
 import 'package:blogify/core/utils/show_snackbar.dart';
+import 'package:blogify/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:blogify/features/auth/presentation/pages/login_page.dart';
 import 'package:blogify/features/blog/presentation/bloc/blog_bloc.dart';
 import 'package:blogify/features/blog/presentation/pages/add_new_blog_page.dart';
 import 'package:blogify/features/blog/presentation/widgets/blog_card.dart';
@@ -50,26 +52,70 @@ class _BlogPageState extends State<BlogPage>
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Blogify'),
+  void _showLogoutDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Logout'),
+        content: const Text('Are you sure you want to logout?'),
         actions: [
-          ScaleTransition(
-            scale: CurvedAnimation(
-              parent: _fabController,
-              curve: Curves.easeInOut,
-            ),
-            child: IconButton(
-              onPressed: () {
-                Navigator.push(context, AddNewBlogPage.route());
-              },
-              icon: const Icon(Icons.add),
-            ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              context.read<AuthBloc>().add(AuthLogoutRequested());
+            },
+            child: const Text('Logout'),
           ),
         ],
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthLogoutSuccess) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            LoginPage.route(),
+            (route) => false,
+          );
+        } else if (state is AuthFailure) {
+          showSnackBar(
+            content: state.message,
+            context: context,
+            type: SnackBarType.error,
+          );
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Blogify'),
+          actions: [
+            ScaleTransition(
+              scale: CurvedAnimation(
+                parent: _fabController,
+                curve: Curves.easeInOut,
+              ),
+              child: IconButton(
+                onPressed: () {
+                  Navigator.push(context, AddNewBlogPage.route());
+                },
+                icon: const Icon(Icons.add),
+              ),
+            ),
+            IconButton(
+              onPressed: _showLogoutDialog,
+              icon: const Icon(Icons.logout),
+              tooltip: 'Logout',
+            ),
+          ],
+        ),
       body: BlocConsumer<BlogBloc, BlogState>(
         listener: (context, state) {
           if (state is BlogFailure) {
@@ -148,6 +194,7 @@ class _BlogPageState extends State<BlogPage>
             ),
           );
         },
+      ),
       ),
     );
   }

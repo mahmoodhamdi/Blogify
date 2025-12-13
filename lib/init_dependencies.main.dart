@@ -54,6 +54,11 @@ void _initAuth() {
       ),
     )
     ..registerFactory(
+      () => UserLogout(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
       () => CurrentUser(
         serviceLocator(),
       ),
@@ -63,6 +68,7 @@ void _initAuth() {
       () => AuthBloc(
         userSignUp: serviceLocator(),
         userLogin: serviceLocator(),
+        userLogout: serviceLocator(),
         currentUser: serviceLocator(),
         appUserCubit: serviceLocator(),
       ),

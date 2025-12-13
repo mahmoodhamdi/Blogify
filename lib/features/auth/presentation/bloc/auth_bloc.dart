@@ -3,6 +3,7 @@ import 'package:blogify/core/usecase/usecase.dart';
 import 'package:blogify/core/common/entities/user.dart';
 import 'package:blogify/features/auth/domain/usecases/current_user.dart';
 import 'package:blogify/features/auth/domain/usecases/user_login.dart';
+import 'package:blogify/features/auth/domain/usecases/user_logout.dart';
 import 'package:blogify/features/auth/domain/usecases/user_sign_up.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -14,15 +15,18 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final UserSignUp _userSignUp;
   final UserLogin _userLogin;
+  final UserLogout _userLogout;
   final CurrentUser _currentUser;
   final AppUserCubit _appUserCubit;
   AuthBloc({
     required UserSignUp userSignUp,
     required UserLogin userLogin,
+    required UserLogout userLogout,
     required CurrentUser currentUser,
     required AppUserCubit appUserCubit,
   })  : _userSignUp = userSignUp,
         _userLogin = userLogin,
+        _userLogout = userLogout,
         _currentUser = currentUser,
         _appUserCubit = appUserCubit,
         super(const AuthInitial()) {
@@ -30,6 +34,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthSignUp>(_onAuthSignUp);
     on<AuthLogin>(_onAuthLogin);
     on<AuthIsUserLoggedIn>(_isUserLoggedIn);
+    on<AuthLogoutRequested>(_onAuthLogout);
   }
 
   void _isUserLoggedIn(
@@ -85,5 +90,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) {
     _appUserCubit.updateUser(user);
     emit(AuthSuccess(user));
+  }
+
+  void _onAuthLogout(
+    AuthLogoutRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    final res = await _userLogout(NoParams());
+
+    res.fold(
+      (l) => emit(AuthFailure(l.message)),
+      (_) {
+        _appUserCubit.updateUser(null);
+        emit(const AuthLogoutSuccess());
+      },
+    );
   }
 }

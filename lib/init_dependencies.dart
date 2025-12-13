@@ -6,6 +6,7 @@ import 'package:blogify/features/auth/data/repositories/auth_repository_impl.dar
 import 'package:blogify/features/auth/domain/repository/auth_repository.dart';
 import 'package:blogify/features/auth/domain/usecases/current_user.dart';
 import 'package:blogify/features/auth/domain/usecases/user_login.dart';
+import 'package:blogify/features/auth/domain/usecases/user_logout.dart';
 import 'package:blogify/features/auth/domain/usecases/user_sign_up.dart';
 import 'package:blogify/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blogify/features/blog/data/datasources/blog_remote_data_source.dart';
