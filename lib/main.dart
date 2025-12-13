@@ -1,4 +1,6 @@
 import 'package:blogify/core/common/cubits/app_user/app_user_cubit.dart';
+import 'package:blogify/core/common/cubits/theme/theme_cubit.dart';
+import 'package:blogify/core/common/cubits/theme/theme_state.dart';
 import 'package:blogify/core/theme/theme.dart';
 import 'package:blogify/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blogify/features/blog/presentation/bloc/blog_bloc.dart';
@@ -8,15 +10,29 @@ import 'package:blogify/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
+
+  // Initialize Hive for local storage
+  final appDocDir = await getApplicationDocumentsDirectory();
+  Hive.init(appDocDir.path);
+
   await initDependencies();
+
+  // Load saved theme
+  await serviceLocator<ThemeCubit>().loadTheme();
+
   runApp(MultiBlocProvider(
     providers: [
       BlocProvider(
         create: (_) => serviceLocator<AppUserCubit>(),
+      ),
+      BlocProvider(
+        create: (_) => serviceLocator<ThemeCubit>(),
       ),
       BlocProvider(
         create: (_) => serviceLocator<AuthBloc>(),
@@ -37,13 +53,17 @@ class Blogify extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      title: 'Blogify',
-      home: const BlogifySplashScreen(),
+    return BlocBuilder<ThemeCubit, ThemeState>(
+      builder: (context, themeState) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeState.themeMode,
+          title: 'Blogify',
+          home: const BlogifySplashScreen(),
+        );
+      },
     );
   }
 }
