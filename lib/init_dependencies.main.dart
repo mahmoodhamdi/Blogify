@@ -154,10 +154,16 @@ void _initProfile() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => UpdateProfile(
+        serviceLocator(),
+      ),
+    )
     // Bloc
     ..registerLazySingleton(
       () => ProfileBloc(
         getUserBlogs: serviceLocator(),
+        updateProfile: serviceLocator(),
       ),
     );
 }

@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:blogify/core/error/failures.dart';
 import 'package:blogify/features/blog/domain/entities/blog.dart';
 import 'package:blogify/features/profile/domain/usecases/get_user_blogs.dart';
+import 'package:blogify/features/profile/domain/usecases/update_profile.dart';
 import 'package:blogify/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -9,9 +10,12 @@ import 'package:mocktail/mocktail.dart';
 
 class MockGetUserBlogs extends Mock implements GetUserBlogs {}
 
+class MockUpdateProfile extends Mock implements UpdateProfile {}
+
 void main() {
   late ProfileBloc profileBloc;
   late MockGetUserBlogs mockGetUserBlogs;
+  late MockUpdateProfile mockUpdateProfile;
 
   const testUserId = 'test-user-id-123';
   final testBlogs = [
@@ -39,7 +43,11 @@ void main() {
 
   setUp(() {
     mockGetUserBlogs = MockGetUserBlogs();
-    profileBloc = ProfileBloc(getUserBlogs: mockGetUserBlogs);
+    mockUpdateProfile = MockUpdateProfile();
+    profileBloc = ProfileBloc(
+      getUserBlogs: mockGetUserBlogs,
+      updateProfile: mockUpdateProfile,
+    );
   });
 
   tearDown(() {

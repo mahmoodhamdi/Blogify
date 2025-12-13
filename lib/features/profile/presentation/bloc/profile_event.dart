@@ -9,3 +9,15 @@ final class ProfileFetchUserBlogs extends ProfileEvent {
 }
 
 final class ProfileFetchMoreBlogs extends ProfileEvent {}
+
+final class ProfileUpdateRequested extends ProfileEvent {
+  final String userId;
+  final String name;
+  final File? avatarImage;
+
+  ProfileUpdateRequested({
+    required this.userId,
+    required this.name,
+    this.avatarImage,
+  });
+}

@@ -23,6 +23,7 @@ import 'package:blogify/features/profile/data/datasources/profile_remote_data_so
 import 'package:blogify/features/profile/data/repositories/profile_repository_impl.dart';
 import 'package:blogify/features/profile/domain/repositories/profile_repository.dart';
 import 'package:blogify/features/profile/domain/usecases/get_user_blogs.dart';
+import 'package:blogify/features/profile/domain/usecases/update_profile.dart';
 import 'package:blogify/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';

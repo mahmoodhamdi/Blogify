@@ -2,52 +2,88 @@
 
 ## Quick Setup Steps
 
-### 1. Create Storage Bucket
+### 1. Create Storage Buckets
 
-Go to **Storage** in Supabase Dashboard and create a new bucket:
+Go to **Storage** in Supabase Dashboard and create two buckets:
 
+#### Bucket 1: Blog Images
 - **Bucket Name**: `blog_images`
 - **Public bucket**: YES (toggle ON)
 - **File size limit**: 5MB
 - **Allowed MIME types**: `image/jpeg, image/png, image/gif, image/webp`
 
+#### Bucket 2: Profile Avatars
+- **Bucket Name**: `profile_avatars`
+- **Public bucket**: YES (toggle ON)
+- **File size limit**: 2MB
+- **Allowed MIME types**: `image/jpeg, image/png, image/gif, image/webp`
+
 ### 2. Storage Policies
 
-After creating the bucket, add these policies:
+After creating the buckets, add these policies:
 
-#### Policy 1: Allow public read access
+#### Blog Images Policies
+
 ```sql
-CREATE POLICY "Public Access"
+-- Public read access for blog images
+CREATE POLICY "Public Access blog_images"
 ON storage.objects FOR SELECT
 USING (bucket_id = 'blog_images');
-```
 
-#### Policy 2: Allow authenticated users to upload
-```sql
-CREATE POLICY "Authenticated users can upload images"
+-- Authenticated users can upload blog images
+CREATE POLICY "Authenticated users can upload blog images"
 ON storage.objects FOR INSERT
 WITH CHECK (
     bucket_id = 'blog_images'
     AND auth.role() = 'authenticated'
 );
-```
 
-#### Policy 3: Allow users to update their own images
-```sql
-CREATE POLICY "Users can update own images"
+-- Users can update their own blog images
+CREATE POLICY "Users can update own blog images"
 ON storage.objects FOR UPDATE
+USING (
+    bucket_id = 'blog_images'
+    AND auth.uid()::text = (storage.foldername(name))[1]
+);
+
+-- Users can delete their own blog images
+CREATE POLICY "Users can delete own blog images"
+ON storage.objects FOR DELETE
 USING (
     bucket_id = 'blog_images'
     AND auth.uid()::text = (storage.foldername(name))[1]
 );
 ```
 
-#### Policy 4: Allow users to delete their own images
+#### Profile Avatars Policies
+
 ```sql
-CREATE POLICY "Users can delete own images"
+-- Public read access for profile avatars
+CREATE POLICY "Public Access profile_avatars"
+ON storage.objects FOR SELECT
+USING (bucket_id = 'profile_avatars');
+
+-- Authenticated users can upload their own avatar
+CREATE POLICY "Users can upload own avatar"
+ON storage.objects FOR INSERT
+WITH CHECK (
+    bucket_id = 'profile_avatars'
+    AND auth.uid()::text = (storage.foldername(name))[1]
+);
+
+-- Users can update their own avatar
+CREATE POLICY "Users can update own avatar"
+ON storage.objects FOR UPDATE
+USING (
+    bucket_id = 'profile_avatars'
+    AND auth.uid()::text = (storage.foldername(name))[1]
+);
+
+-- Users can delete their own avatar
+CREATE POLICY "Users can delete own avatar"
 ON storage.objects FOR DELETE
 USING (
-    bucket_id = 'blog_images'
+    bucket_id = 'profile_avatars'
     AND auth.uid()::text = (storage.foldername(name))[1]
 );
 ```

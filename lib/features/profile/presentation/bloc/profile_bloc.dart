@@ -1,5 +1,9 @@
+import 'dart:io';
+
+import 'package:blogify/core/common/entities/user.dart';
 import 'package:blogify/features/blog/domain/entities/blog.dart';
 import 'package:blogify/features/profile/domain/usecases/get_user_blogs.dart';
+import 'package:blogify/features/profile/domain/usecases/update_profile.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -8,13 +12,17 @@ part 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final GetUserBlogs _getUserBlogs;
+  final UpdateProfile _updateProfile;
 
   ProfileBloc({
     required GetUserBlogs getUserBlogs,
+    required UpdateProfile updateProfile,
   })  : _getUserBlogs = getUserBlogs,
+        _updateProfile = updateProfile,
         super(const ProfileInitial()) {
     on<ProfileFetchUserBlogs>(_onFetchUserBlogs);
     on<ProfileFetchMoreBlogs>(_onFetchMoreBlogs);
+    on<ProfileUpdateRequested>(_onUpdateProfile);
   }
 
   static const int _blogsPerPage = 10;
@@ -76,5 +84,25 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         },
       );
     }
+  }
+
+  void _onUpdateProfile(
+    ProfileUpdateRequested event,
+    Emitter<ProfileState> emit,
+  ) async {
+    emit(const ProfileUpdating());
+
+    final res = await _updateProfile(
+      UpdateProfileParams(
+        userId: event.userId,
+        name: event.name,
+        avatarImage: event.avatarImage,
+      ),
+    );
+
+    res.fold(
+      (l) => emit(ProfileFailure(l.message)),
+      (user) => emit(ProfileUpdateSuccess(user)),
+    );
   }
 }

@@ -53,3 +53,15 @@ final class ProfileFailure extends ProfileState {
   @override
   List<Object?> get props => [message];
 }
+
+final class ProfileUpdating extends ProfileState {
+  const ProfileUpdating();
+}
+
+final class ProfileUpdateSuccess extends ProfileState {
+  final User user;
+  const ProfileUpdateSuccess(this.user);
+
+  @override
+  List<Object?> get props => [user];
+}

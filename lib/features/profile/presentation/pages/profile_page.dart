@@ -8,6 +8,7 @@ import 'package:blogify/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blogify/features/auth/presentation/pages/login_page.dart';
 import 'package:blogify/features/blog/presentation/widgets/blog_card.dart';
 import 'package:blogify/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:blogify/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:blogify/features/profile/presentation/widgets/profile_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -196,7 +197,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: ProfileHeader(
                       name: user.name,
                       email: user.email,
+                      avatarUrl: user.avatarUrl,
                       isDarkMode: isDarkMode,
+                      onEditPressed: () {
+                        Navigator.push(context, EditProfilePage.route());
+                      },
                     ),
                   ),
 

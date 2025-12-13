@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:blogify/core/common/entities/user.dart';
 import 'package:blogify/core/error/exceptions.dart';
 import 'package:blogify/core/error/failures.dart';
 import 'package:blogify/core/network/connection_checker.dart';
@@ -31,6 +34,27 @@ class ProfileRepositoryImpl implements ProfileRepository {
         limit: limit,
       );
       return right(blogs);
+    } on ServerException catch (e) {
+      return left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, User>> updateProfile({
+    required String userId,
+    required String name,
+    File? avatarImage,
+  }) async {
+    try {
+      if (!await connectionChecker.isConnected) {
+        return left(const NetworkFailure());
+      }
+      final user = await profileRemoteDataSource.updateProfile(
+        userId: userId,
+        name: name,
+        avatarImage: avatarImage,
+      );
+      return right(user);
     } on ServerException catch (e) {
       return left(ServerFailure(message: e.message));
     }
