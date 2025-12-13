@@ -24,11 +24,11 @@ void main() {
     mockBlogBloc = MockBlogBloc();
     mockAppUserCubit = MockAppUserCubit();
 
-    when(() => mockAuthBloc.state).thenReturn(AuthInitial());
+    when(() => mockAuthBloc.state).thenReturn(const AuthInitial());
     when(() => mockAuthBloc.stream).thenAnswer((_) => const Stream.empty());
-    when(() => mockBlogBloc.state).thenReturn(BlogInitial());
+    when(() => mockBlogBloc.state).thenReturn(const BlogInitial());
     when(() => mockBlogBloc.stream).thenAnswer((_) => const Stream.empty());
-    when(() => mockAppUserCubit.state).thenReturn(AppUserInitial());
+    when(() => mockAppUserCubit.state).thenReturn(const AppUserInitial());
     when(() => mockAppUserCubit.stream).thenAnswer((_) => const Stream.empty());
   });
 

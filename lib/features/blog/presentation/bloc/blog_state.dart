@@ -1,20 +1,37 @@
 part of 'blog_bloc.dart';
 
 @immutable
-sealed class BlogState {}
+sealed class BlogState extends Equatable {
+  const BlogState();
 
-final class BlogInitial extends BlogState {}
+  @override
+  List<Object?> get props => [];
+}
 
-final class BlogLoading extends BlogState {}
+final class BlogInitial extends BlogState {
+  const BlogInitial();
+}
+
+final class BlogLoading extends BlogState {
+  const BlogLoading();
+}
 
 final class BlogFailure extends BlogState {
   final String error;
-  BlogFailure(this.error);
+  const BlogFailure(this.error);
+
+  @override
+  List<Object?> get props => [error];
 }
 
-final class BlogUploadSuccess extends BlogState {}
+final class BlogUploadSuccess extends BlogState {
+  const BlogUploadSuccess();
+}
 
 final class BlogsDisplaySuccess extends BlogState {
   final List<Blog> blogs;
-  BlogsDisplaySuccess(this.blogs);
+  const BlogsDisplaySuccess(this.blogs);
+
+  @override
+  List<Object?> get props => [blogs];
 }

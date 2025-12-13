@@ -1,7 +1,7 @@
 import 'package:blogify/features/blog/domain/entities/blog.dart';
 
 class BlogModel extends Blog {
-  BlogModel({
+  const BlogModel({
     required super.id,
     required super.posterId,
     required super.title,

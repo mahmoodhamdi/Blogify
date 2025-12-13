@@ -1,8 +1,10 @@
 import 'dart:io';
+
 import 'package:blogify/core/usecase/usecase.dart';
 import 'package:blogify/features/blog/domain/entities/blog.dart';
 import 'package:blogify/features/blog/domain/usecases/get_all_blogs.dart';
 import 'package:blogify/features/blog/domain/usecases/upload_blog.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 part 'blog_event.dart';
@@ -16,8 +18,8 @@ class BlogBloc extends Bloc<BlogEvent, BlogState> {
     required GetAllBlogs getAllBlogs,
   })  : _uploadBlog = uploadBlog,
         _getAllBlogs = getAllBlogs,
-        super(BlogInitial()) {
-    on<BlogEvent>((event, emit) => emit(BlogLoading()));
+        super(const BlogInitial()) {
+    on<BlogEvent>((event, emit) => emit(const BlogLoading()));
     on<BlogUpload>(_onBlogUpload);
     on<BlogFetchAllBlogs>(_onFetchAllBlogs);
   }
@@ -38,7 +40,7 @@ class BlogBloc extends Bloc<BlogEvent, BlogState> {
 
     res.fold(
       (l) => emit(BlogFailure(l.message)),
-      (r) => emit(BlogUploadSuccess()),
+      (r) => emit(const BlogUploadSuccess()),
     );
   }
 
