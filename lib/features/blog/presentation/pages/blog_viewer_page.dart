@@ -5,6 +5,7 @@ import 'package:blogify/core/utils/format_date.dart';
 import 'package:blogify/features/blog/domain/entities/blog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 
 class BlogViewPage extends StatefulWidget {
   static MaterialPageRoute<dynamic> route(Blog blog, Color cardColor) => MaterialPageRoute(
@@ -45,6 +46,19 @@ class _BlogViewPageState extends State<BlogViewPage> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _shareBlog() {
+    final blog = widget.blog;
+    final shareText = '''
+${blog.title}
+
+${blog.content.length > 200 ? '${blog.content.substring(0, 200)}...' : blog.content}
+
+By ${blog.posterName ?? 'Anonymous'}
+Read more on Blogify!
+''';
+    Share.share(shareText, subject: blog.title);
   }
 
   @override
@@ -162,9 +176,7 @@ class _BlogViewPageState extends State<BlogViewPage> {
                       duration: const Duration(milliseconds: 800),
                       opacity: _scrollOffset > 100 ? 1 : 0.5,
                       child: ElevatedButton(
-                        onPressed: () {
-                          // Handle action
-                        },
+                        onPressed: () => _shareBlog(),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: accentColor,
                           shape: RoundedRectangleBorder(

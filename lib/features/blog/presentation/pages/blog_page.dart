@@ -23,13 +23,25 @@ class _BlogPageState extends State<BlogPage>
   @override
   void initState() {
     super.initState();
-    context.read<BlogBloc>().add(BlogFetchAllBlogs());
+    _fetchBlogs();
 
     // FAB Animation
     _fabController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     )..forward();
+  }
+
+  void _fetchBlogs() {
+    context.read<BlogBloc>().add(BlogFetchAllBlogs());
+  }
+
+  Future<void> _onRefresh() async {
+    _fetchBlogs();
+    // Wait for the state to change
+    await context.read<BlogBloc>().stream.firstWhere(
+          (state) => state is BlogsDisplaySuccess || state is BlogFailure,
+        );
   }
 
   @override
@@ -74,61 +86,103 @@ class _BlogPageState extends State<BlogPage>
           }
 
           if (state is BlogsDisplaySuccess) {
-            return ListView.builder(
-              itemCount: state.blogs.length,
-              itemBuilder: (context, index) {
-                final blog = state.blogs[index];
+            if (state.blogs.isEmpty) {
+              return RefreshIndicator(
+                onRefresh: _onRefresh,
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      child: _buildEmptyState(),
+                    ),
+                  ],
+                ),
+              );
+            }
 
-                return AnimatedBuilder(
-                  animation: _fabController,
-                  builder: (context, child) {
-                    return FadeTransition(
-                      opacity: _fabController,
-                      child: SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(0, 0.2),
-                          end: Offset.zero,
-                        ).animate(CurvedAnimation(
-                          parent: _fabController,
-                          curve: Curves.easeOut,
-                        )),
-                        child: BlogCard(
-                          index: index,
-                          blog: blog,
+            return RefreshIndicator(
+              onRefresh: _onRefresh,
+              child: ListView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: state.blogs.length,
+                itemBuilder: (context, index) {
+                  final blog = state.blogs[index];
+
+                  return AnimatedBuilder(
+                    animation: _fabController,
+                    builder: (context, child) {
+                      return FadeTransition(
+                        opacity: _fabController,
+                        child: SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(0, 0.2),
+                            end: Offset.zero,
+                          ).animate(CurvedAnimation(
+                            parent: _fabController,
+                            curve: Curves.easeOut,
+                          )),
+                          child: BlogCard(
+                            index: index,
+                            blog: blog,
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                );
-              },
+                      );
+                    },
+                  );
+                },
+              ),
             );
           }
 
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+          return RefreshIndicator(
+            onRefresh: _onRefresh,
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
               children: [
-                Icon(
-                  Icons.search_off,
-                  size: 80,
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'No Blogs Found',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.7),
-                        fontSize: 18,
-                      ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  child: _buildEmptyState(),
                 ),
               ],
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.article_outlined,
+            size: 80,
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'No Blogs Yet',
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.7),
+                ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Pull down to refresh or tap + to create a blog',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.5),
+                ),
+          ),
+        ],
       ),
     );
   }
