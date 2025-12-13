@@ -1,3 +1,5 @@
+import 'dart:math' show pi;
+
 import 'package:blogify/core/theme/app_pallete.dart';
 import 'package:flutter/material.dart';
 
@@ -42,7 +44,7 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
         animation: _animation,
         builder: (context, child) {
           return Transform.rotate(
-            angle: _controller.value * 2 * 3.14,
+            angle: _controller.value * 2 * pi,
             child: CustomPaint(
               size: Size(widget.size, widget.size),
               painter: _LoaderPainter(
@@ -81,7 +83,7 @@ class _LoaderPainter extends CustomPainter {
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
       0,
-      animation.value * 3.14,
+      animation.value * pi,
       false,
       paint,
     );
@@ -90,8 +92,8 @@ class _LoaderPainter extends CustomPainter {
     paint.color = color2;
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
-      3.14,
-      animation.value * 3.14,
+      pi,
+      animation.value * pi,
       false,
       paint,
     );

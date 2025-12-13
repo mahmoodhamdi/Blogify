@@ -123,7 +123,7 @@ class _BlogViewPageState extends State<BlogViewPage> {
                   Row(
                     children: [
                       Text(
-                        'By ${widget.blog.posterName}',
+                        'By ${widget.blog.posterName ?? 'Anonymous'}',
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 16,
