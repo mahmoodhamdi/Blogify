@@ -102,11 +102,17 @@ void _initBlog() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => DeleteBlog(
+        serviceLocator(),
+      ),
+    )
     // Bloc
     ..registerLazySingleton(
       () => BlogBloc(
         uploadBlog: serviceLocator(),
         getAllBlogs: serviceLocator(),
+        deleteBlog: serviceLocator(),
       ),
     );
 }

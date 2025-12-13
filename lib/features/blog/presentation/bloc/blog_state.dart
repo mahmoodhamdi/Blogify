@@ -35,3 +35,7 @@ final class BlogsDisplaySuccess extends BlogState {
   @override
   List<Object?> get props => [blogs];
 }
+
+final class BlogDeleteSuccess extends BlogState {
+  const BlogDeleteSuccess();
+}

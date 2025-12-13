@@ -11,6 +11,7 @@ abstract interface class BlogRemoteDataSource {
     required BlogModel blog,
   });
   Future<List<BlogModel>> getAllBlogs();
+  Future<void> deleteBlog(String blogId);
 }
 
 class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
@@ -64,6 +65,23 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
             ),
           )
           .toList();
+    } on PostgrestException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> deleteBlog(String blogId) async {
+    try {
+      // Delete the blog image from storage
+      await supabaseClient.storage.from('blog_images').remove([blogId]);
+
+      // Delete the blog from the database
+      await supabaseClient.from('blogs').delete().eq('id', blogId);
+    } on StorageException catch (e) {
+      throw ServerException(e.message);
     } on PostgrestException catch (e) {
       throw ServerException(e.message);
     } catch (e) {
